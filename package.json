@@ -1,0 +1,64 @@
+{
+  "name": "mini-games-tools",
+  "version": "1.4.4",
+  "private": true,
+  "type": "module",
+  "description": "小黑盒工坊小程序：云海转盘 + 小玩法 + 单词机",
+  "heybox": {
+    "miniProgramId": "01a1e9a3-2911-7083-87dc-f78931778505",
+    "name": "复古游戏",
+    "desc": "复古小游戏合集：扫雷、切水果、2048、贪吃蛇、流水入杯、诗山寻踪。所有模式成绩按基准量化后累加成综合总分榜，没玩过的模式记 0 分。",
+    "category": "other",
+    "icon": "assets/icon.png",
+    "coverImages": [
+      "assets/cover.png"
+    ],
+    "platforms": [
+      "android",
+      "ios",
+      "ohos",
+      "windows",
+      "macos"
+    ],
+    "permissions": {
+      "userInfo": {
+        "enabled": true
+      },
+      "storage": {
+        "enabled": true
+      },
+      "cloud_storage": {
+        "enabled": true
+      },
+      "filesystem": {
+        "enabled": true
+      },
+      "share": {
+        "enabled": true
+      },
+      "leaderboard": {
+        "enabled": true
+      }
+    }
+  },
+  "scripts": {
+    "hb-sdk": "hb-sdk",
+    "dev": "hb-sdk dev",
+    "dev:vite": "vite",
+    "build": "hb-sdk build",
+    "deploy": "hb-sdk remote deploy",
+    "gen:bgm": "node tools/gen-bgm.mjs",
+    "gen:images": "node tools/gen-images.mjs",
+    "gen:chars": "node tools/collect-chars.mjs",
+    "gen:voice": "node tools/copy-voice.mjs",
+    "test": "node tools/test-savever.mjs && node tools/test-save.mjs && node tools/test-liushui.mjs && node tools/test-python.mjs && node tools/test-boards.mjs && node tools/test-account.mjs && node tools/test-quantize.mjs && node tools/test-games.mjs && node tools/test-handshake.mjs && node tools/test-artwork.mjs && node tools/test-provider-models.mjs && node tools/test-variant-isolation.mjs && node tools/test-mod-toggle.mjs && node tools/test-base-info.mjs && node tools/test-fonts.mjs && node tools/test-fruitninja.mjs && node tools/test-spectate.mjs && node tools/test-bgm.mjs && node tools/test-watermelon-pointer.mjs && node tools/test-donghai.mjs && node tools/check-donghai-fork.mjs"
+  },
+  "dependencies": {
+    "@heybox/hb-sdk": "^0.9.8",
+    "phaser": "^3.90.0"
+  },
+  "devDependencies": {
+    "lamejs": "^1.2.1",
+    "vite": "^8.0.12"
+  }
+}

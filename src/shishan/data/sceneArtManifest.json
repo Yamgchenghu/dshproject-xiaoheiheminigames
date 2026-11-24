@@ -1,0 +1,363 @@
+{
+  "generatedAt": "2026-11-07T02:57:27.160Z",
+  "style": "场景美术覆盖图（地图 / 人物 / 地图物品 / 交互对话框皮肤）",
+  "directory": "assets/images/scene",
+  "counts": {
+    "map": 6,
+    "character": 4,
+    "prop": 12,
+    "ui": 13
+  },
+  "items": [
+    {
+      "key": "bg_map_1_meadow",
+      "kind": "map",
+      "title": "第一章地形底图 · 青芽谷溪边草甸",
+      "file": "i/bg_map_1_meadow.webp",
+      "width": 2400,
+      "height": 1400,
+      "bytes": 5739951,
+      "slices": null
+    },
+    {
+      "key": "bg_map_2_taoxi",
+      "kind": "map",
+      "title": "第二章地形底图 · 清溪渡桃溪岸",
+      "file": "i/bg_map_2_taoxi.webp",
+      "width": 2400,
+      "height": 1400,
+      "bytes": 5895262,
+      "slices": null
+    },
+    {
+      "key": "bg_map_3_study",
+      "kind": "map",
+      "title": "第三章地形底图 · 松风书院",
+      "file": "i/bg_map_3_study.webp",
+      "width": 2400,
+      "height": 1400,
+      "bytes": 5924674,
+      "slices": null
+    },
+    {
+      "key": "bg_map_4_temple",
+      "kind": "map",
+      "title": "第四章地形底图 · 云涧古观",
+      "file": "i/bg_map_4_temple.webp",
+      "width": 2400,
+      "height": 1400,
+      "bytes": 5922930,
+      "slices": null
+    },
+    {
+      "key": "bg_map_5_village",
+      "kind": "map",
+      "title": "第五章地形底图 · 云麓文庄",
+      "file": "i/bg_map_5_village.webp",
+      "width": 2400,
+      "height": 1400,
+      "bytes": 5939946,
+      "slices": null
+    },
+    {
+      "key": "bg_map_6_stage",
+      "kind": "map",
+      "title": "第六章地形底图 · 凌霄诗台",
+      "file": "i/bg_map_6_stage.webp",
+      "width": 2400,
+      "height": 1400,
+      "bytes": 5812604,
+      "slices": null
+    },
+    {
+      "key": "poem_boy_idle",
+      "kind": "character",
+      "title": "小诗童 · 站立帧",
+      "file": "i/poem_boy_idle.webp",
+      "width": 100,
+      "height": 120,
+      "bytes": 10324,
+      "slices": null
+    },
+    {
+      "key": "poem_boy_walk_1",
+      "kind": "character",
+      "title": "小诗童 · 走路帧一",
+      "file": "i/poem_boy_walk_1.webp",
+      "width": 100,
+      "height": 120,
+      "bytes": 11347,
+      "slices": null
+    },
+    {
+      "key": "poem_boy_walk_2",
+      "kind": "character",
+      "title": "小诗童 · 走路帧二",
+      "file": "i/poem_boy_walk_2.webp",
+      "width": 100,
+      "height": 120,
+      "bytes": 11204,
+      "slices": null
+    },
+    {
+      "key": "npc_cowherd",
+      "kind": "character",
+      "title": "牧童阿青",
+      "file": "i/npc_cowherd.webp",
+      "width": 100,
+      "height": 120,
+      "bytes": 12431,
+      "slices": null
+    },
+    {
+      "key": "node_stele",
+      "kind": "prop",
+      "title": "画卷石碑（普通诗碑）",
+      "file": "i/node_stele.webp",
+      "width": 110,
+      "height": 150,
+      "bytes": 11565,
+      "slices": null
+    },
+    {
+      "key": "node_stele_hidden",
+      "kind": "prop",
+      "title": "隐藏诗碑（青苔石碑）",
+      "file": "i/node_stele_hidden.webp",
+      "width": 110,
+      "height": 150,
+      "bytes": 12729,
+      "slices": null
+    },
+    {
+      "key": "node_signpost",
+      "kind": "prop",
+      "title": "指路木牌",
+      "file": "i/node_signpost.webp",
+      "width": 96,
+      "height": 140,
+      "bytes": 7915,
+      "slices": null
+    },
+    {
+      "key": "node_festival_stele",
+      "kind": "prop",
+      "title": "节气 / 节日诗碑",
+      "file": "i/node_festival_stele.webp",
+      "width": 120,
+      "height": 160,
+      "bytes": 15791,
+      "slices": null
+    },
+    {
+      "key": "node_fragment",
+      "kind": "prop",
+      "title": "逸闻碎片",
+      "file": "i/node_fragment.webp",
+      "width": 64,
+      "height": 64,
+      "bytes": 6361,
+      "slices": null
+    },
+    {
+      "key": "tree_round",
+      "kind": "prop",
+      "title": "圆冠阔叶树",
+      "file": "i/tree_round.webp",
+      "width": 260,
+      "height": 300,
+      "bytes": 73602,
+      "slices": null
+    },
+    {
+      "key": "tree_blossom",
+      "kind": "prop",
+      "title": "花树（落英树）",
+      "file": "i/tree_blossom.webp",
+      "width": 260,
+      "height": 300,
+      "bytes": 74254,
+      "slices": null
+    },
+    {
+      "key": "tree_pine",
+      "kind": "prop",
+      "title": "松树",
+      "file": "i/tree_pine.webp",
+      "width": 240,
+      "height": 320,
+      "bytes": 36338,
+      "slices": null
+    },
+    {
+      "key": "rock",
+      "kind": "prop",
+      "title": "青苔石头",
+      "file": "i/rock.webp",
+      "width": 140,
+      "height": 100,
+      "bytes": 11972,
+      "slices": null
+    },
+    {
+      "key": "reed",
+      "kind": "prop",
+      "title": "溪边芦苇",
+      "file": "i/reed.webp",
+      "width": 120,
+      "height": 160,
+      "bytes": 7339,
+      "slices": null
+    },
+    {
+      "key": "petal",
+      "kind": "prop",
+      "title": "飘落花瓣",
+      "file": "i/petal.webp",
+      "width": 18,
+      "height": 14,
+      "bytes": 480,
+      "slices": null
+    },
+    {
+      "key": "pavilion",
+      "kind": "prop",
+      "title": "溪边凉亭",
+      "file": "i/pavilion.webp",
+      "width": 320,
+      "height": 260,
+      "bytes": 40962,
+      "slices": null
+    },
+    {
+      "key": "ui_btn_primary",
+      "kind": "ui",
+      "title": "主按钮皮肤",
+      "file": "i/ui_btn_primary.webp",
+      "width": 80,
+      "height": 80,
+      "bytes": 9650,
+      "slices": 20
+    },
+    {
+      "key": "ui_btn_secondary",
+      "kind": "ui",
+      "title": "次按钮皮肤",
+      "file": "i/ui_btn_secondary.webp",
+      "width": 80,
+      "height": 80,
+      "bytes": 9769,
+      "slices": 20
+    },
+    {
+      "key": "ui_btn_soft",
+      "kind": "ui",
+      "title": "青绿浅按钮皮肤",
+      "file": "i/ui_btn_soft.webp",
+      "width": 80,
+      "height": 80,
+      "bytes": 10202,
+      "slices": 20
+    },
+    {
+      "key": "ui_btn_gold",
+      "kind": "ui",
+      "title": "金色按钮皮肤",
+      "file": "i/ui_btn_gold.webp",
+      "width": 80,
+      "height": 80,
+      "bytes": 10200,
+      "slices": 20
+    },
+    {
+      "key": "ui_btn_danger",
+      "kind": "ui",
+      "title": "警示按钮皮肤",
+      "file": "i/ui_btn_danger.webp",
+      "width": 80,
+      "height": 80,
+      "bytes": 9790,
+      "slices": 20
+    },
+    {
+      "key": "ui_btn_ghost",
+      "kind": "ui",
+      "title": "幽灵按钮皮肤（关闭 ×）",
+      "file": "i/ui_btn_ghost.webp",
+      "width": 80,
+      "height": 80,
+      "bytes": 2106,
+      "slices": 20
+    },
+    {
+      "key": "ui_btn_correct",
+      "kind": "ui",
+      "title": "答对按钮皮肤",
+      "file": "i/ui_btn_correct.webp",
+      "width": 80,
+      "height": 80,
+      "bytes": 10274,
+      "slices": 20
+    },
+    {
+      "key": "ui_btn_muted",
+      "kind": "ui",
+      "title": "禁用/弱化按钮皮肤",
+      "file": "i/ui_btn_muted.webp",
+      "width": 80,
+      "height": 80,
+      "bytes": 9681,
+      "slices": 20
+    },
+    {
+      "key": "ui_btn_tab_active",
+      "kind": "ui",
+      "title": "选中的页签皮肤",
+      "file": "i/ui_btn_tab_active.webp",
+      "width": 80,
+      "height": 80,
+      "bytes": 10005,
+      "slices": 20
+    },
+    {
+      "key": "ui_btn_tab",
+      "kind": "ui",
+      "title": "未选中页签皮肤",
+      "file": "i/ui_btn_tab.webp",
+      "width": 80,
+      "height": 80,
+      "bytes": 9628,
+      "slices": 20
+    },
+    {
+      "key": "ui_panel",
+      "kind": "ui",
+      "title": "纸卡面板 / 弹窗皮肤",
+      "file": "i/ui_panel.webp",
+      "width": 96,
+      "height": 96,
+      "bytes": 14346,
+      "slices": 28
+    },
+    {
+      "key": "ui_toast",
+      "kind": "ui",
+      "title": "吐司提示条皮肤（普通）",
+      "file": "i/ui_toast.webp",
+      "width": 128,
+      "height": 64,
+      "bytes": 11066,
+      "slices": 24
+    },
+    {
+      "key": "ui_toast_warn",
+      "kind": "ui",
+      "title": "吐司提示条皮肤（提醒）",
+      "file": "i/ui_toast_warn.webp",
+      "width": 128,
+      "height": 64,
+      "bytes": 11271,
+      "slices": 24
+    }
+  ]
+}

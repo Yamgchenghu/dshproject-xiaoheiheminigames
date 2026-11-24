@@ -1,0 +1,32 @@
+# 依赖
+node_modules/
+
+# 构建产物
+dist/
+.cache/
+
+# 发布包（APK / zip 是成品，不进源码仓库）
+实用工具/
+
+# 系统与编辑器
+.DS_Store
+Thumbs.db
+*.log
+.vscode/
+.idea/
+
+# 临时调试脚本
+# 【为什么放行 _preview.vite.config.mjs】它是预览用的 Vite 配置，
+#   不是一次性调试脚本，删了就没法起本地预览服务。
+_*.cjs
+_*.png
+_*.py
+!_preview.vite.config.mjs
+
+# 音频中间产物（mp3 在 public/bgm/，wav/mid 只是生成过程中的临时文件）
+tools/out/
+
+# 密钥：绝不入库
+*.key
+.env
+.env.*

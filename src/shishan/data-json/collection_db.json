@@ -1,0 +1,194 @@
+[
+  {
+    "collection_id": "qingzhu_bi",
+    "name": "青竹小笔",
+    "desc": "笔杆是一小截青竹，握在手里凉凉的。写出来的字，像带着竹叶的影子。",
+    "ai_prompt": "淡彩国风插画：一支青竹笔斜搁在宣纸上，窗外竹影摇进案头，留白多、颜色浅。",
+    "rarity": "普通",
+    "channel": "level"
+  },
+  {
+    "collection_id": "suxin_jian",
+    "name": "素心笺",
+    "desc": "一张什么花样也没有的白纸，正好留给第一句自己想出来的诗。",
+    "ai_prompt": "淡彩国风插画：一张素白信笺铺在木案上，纸角压着一粒小石子，右上角一枚淡淡的朱印。",
+    "rarity": "普通",
+    "channel": "level"
+  },
+  {
+    "collection_id": "taoxi_shuiyu",
+    "name": "桃溪水盂",
+    "desc": "小小的水盂，盛着桃溪的水。磨墨的时候，水里会浮起一点花香。",
+    "ai_prompt": "淡彩国风插画：青瓷小水盂盛着清水，两片桃花落在水面上，背景是浅浅的溪石。",
+    "rarity": "普通",
+    "channel": "level"
+  },
+  {
+    "collection_id": "songfeng_shuqian",
+    "name": "松风书签",
+    "desc": "松针压成的书签，夹在书页里。翻页的时候，好像听见风从松林穿过。",
+    "ai_prompt": "淡彩国风插画：一枚压着松针的书签夹在翻开的诗集里，远处山影薄薄的。",
+    "rarity": "普通",
+    "channel": "level"
+  },
+  {
+    "collection_id": "yunjian_bijia",
+    "name": "云涧笔架",
+    "desc": "三座小山一样的笔架，笔搁上去，就像把笔安顿在山间休息。",
+    "ai_prompt": "淡彩国风插画：青石笔架形如三座小山，一支毛笔搁在山口，云雾在笔架腰上绕。",
+    "rarity": "稀有",
+    "channel": "chapter"
+  },
+  {
+    "collection_id": "songyan_mo",
+    "name": "松烟墨锭",
+    "desc": "用松烟慢慢捣成的墨。磨开的时候，颜色像夜里安静的山影。",
+    "ai_prompt": "淡彩国风插画：一块镌着松纹的墨锭立在砚边，墨池里映着夜色与远山。",
+    "rarity": "稀有",
+    "channel": "chapter"
+  },
+  {
+    "collection_id": "zhuying_zhenzhi",
+    "name": "竹影镇纸",
+    "desc": "镇纸上刻着一小片竹影。风大的时候，书页也不会乱翻。",
+    "ai_prompt": "淡彩国风插画：黄铜镇纸压住摊开的书页，镇纸上有淡淡的竹叶刻纹。",
+    "rarity": "稀有",
+    "channel": "chapter"
+  },
+  {
+    "collection_id": "lianhua_xi",
+    "name": "莲香水洗",
+    "desc": "笔洗像一朵半开的莲。洗笔时，墨色会慢慢在水里开成一朵花。",
+    "ai_prompt": "淡彩国风插画：莲花形的笔洗里，墨色在水中散开，像花瓣一层层打开。",
+    "rarity": "稀有",
+    "channel": "chapter"
+  },
+  {
+    "collection_id": "yuebai_yan",
+    "name": "月白砚",
+    "desc": "砚台是月白色的，磨墨时，像把一小片月光研进了墨里。",
+    "ai_prompt": "淡彩国风插画：月白色石砚盛着清水，砚面映着一小片弯月，案头很安静。",
+    "rarity": "典藏",
+    "channel": "anecdote"
+  },
+  {
+    "collection_id": "shishan_yin",
+    "name": "诗山主人小印",
+    "desc": "走遍诗山才刻好的小印。印面是一座很轻的山，盖在纸上像云雾散开。",
+    "ai_prompt": "淡彩国风插画：一枚小小的石印盖在纸上，印出一座淡淡的山形，朱色微微洇开。",
+    "rarity": "典藏",
+    "channel": "anecdote"
+  },
+  {
+    "collection_id": "lingxiao_bishan",
+    "name": "青玉山石笔架",
+    "desc": "故宫珍藏的清代青玉笔架，匠人顺着玉料原形，琢成层层叠叠的湖石。高低错落的峰与孔洞，摆在案上就像一座小小的石山。",
+    "ai_prompt": "淡彩国风插画：一方清代青玉山石形笔架摆在书案上，玉色青灰，湖石层叠、孔洞错落，旁边搁着一支毛笔与素纸。",
+    "rarity": "典藏",
+    "channel": "trial"
+  },
+  {
+    "collection_id": "yunlu_shuxiang",
+    "name": "云麓书香",
+    "desc": "云麓文庄藏书楼里熏过的香，装在小铜炉里，闻起来像旧书页。",
+    "ai_prompt": "淡彩国风插画：小小铜香炉飘出一缕很淡的烟，背后是一排排旧书与木格窗。",
+    "rarity": "典藏",
+    "channel": "trial"
+  },
+  {
+    "collection_id": "mengtian_bi",
+    "name": "蒙恬笔",
+    "desc": "传说秦朝大将蒙恬改良了毛笔，把笔头扎进竹管里，写字从此又快又稳。这支笔是后人照着他的做法削成的。",
+    "ai_prompt": "淡彩国风插画：一支古法竹管毛笔搁在竹简与素纸上，笔头饱满，案边放着小刀与麻线。",
+    "rarity": "普通",
+    "channel": "level"
+  },
+  {
+    "collection_id": "xuetao_jian",
+    "name": "薛涛笺",
+    "desc": "唐代女诗人薛涛住在浣花溪边，用花瓣染出深红的小彩笺，题上诗句寄给朋友，人们叫它薛涛笺。",
+    "ai_prompt": "淡彩国风插画：一叠深红小彩笺放在溪边石案上，花瓣落在纸间，溪水浅浅。",
+    "rarity": "普通",
+    "channel": "level"
+  },
+  {
+    "collection_id": "xuancheng_zhi",
+    "name": "宣纸",
+    "desc": "宣城出产的宣纸，薄薄的却能吃住很浓的墨。书家写字、画家作画，都喜欢用它。",
+    "ai_prompt": "淡彩国风插画：一叠洁白宣纸铺在木案上，纸纹像薄云，旁边搁着一支蘸墨的笔。",
+    "rarity": "普通",
+    "channel": "level"
+  },
+  {
+    "collection_id": "huizhou_mo",
+    "name": "徽墨",
+    "desc": "徽州的老墨，捣烟、和胶、压模要花很久。磨开以后，墨色又黑又亮，还带着淡淡松香。",
+    "ai_prompt": "淡彩国风插画：徽州墨锭排在木盒里，墨面压着细纹图案，砚池边泛着墨光。",
+    "rarity": "普通",
+    "channel": "level"
+  },
+  {
+    "collection_id": "duan_yan",
+    "name": "端砚",
+    "desc": "广东端溪的石头做的砚台，石质细润，磨墨又快又匀。唐宋文人都把它当宝贝。",
+    "ai_prompt": "淡彩国风插画：一方紫石端砚盛着清水，砚池边雕着小小的云纹，案上落着墨光。",
+    "rarity": "稀有",
+    "channel": "level"
+  },
+  {
+    "collection_id": "she_yan",
+    "name": "歙砚",
+    "desc": "歙州龙尾山的石头做成砚台，石面上有细细的纹路，像水波又像眉纹，一研墨就出得很快。",
+    "ai_prompt": "淡彩国风插画：一方歙砚石纹如水波，旁边放着墨锭与半卷诗书，色调青灰。",
+    "rarity": "稀有",
+    "channel": "level"
+  },
+  {
+    "collection_id": "zhuge_bi",
+    "name": "诸葛笔",
+    "desc": "宣城诸葛家世代做笔，笔头尖、齐、圆、健，宋代文人都爱用。一支好笔，要挑毛、扎头、装杆，几十道工夫。",
+    "ai_prompt": "淡彩国风插画：笔架上并排挂着三支诸葛笔，笔锋整齐饱满，窗外竹影淡淡。",
+    "rarity": "稀有",
+    "channel": "level"
+  },
+  {
+    "collection_id": "litingui_mo",
+    "name": "李廷珪墨",
+    "desc": "南唐墨工李廷珪做的墨，坚硬如玉，据说掉进水里很久也不坏。后人把这种墨当作墨中珍品。",
+    "ai_prompt": "淡彩国风插画：一块古墨立在锦盒中，墨面刻着金色小字，旁边放着研墨的石砚。",
+    "rarity": "稀有",
+    "channel": "level"
+  },
+  {
+    "collection_id": "chengxin_tang_zhi",
+    "name": "澄心堂纸",
+    "desc": "南唐后主李煜喜欢的纸，藏在澄心堂里。纸面细腻如脂，写起字来不发涩，宋代文人得到一张都舍不得用。",
+    "ai_prompt": "淡彩国风插画：一张细腻的澄心堂纸铺在书案上，纸色温润，旁边是玉镇纸与砚台。",
+    "rarity": "典藏",
+    "channel": "anecdote"
+  },
+  {
+    "collection_id": "tongque_wa_yan",
+    "name": "铜雀瓦砚",
+    "desc": "相传用曹操铜雀台的旧瓦磨成砚台，瓦质坚细，研墨时仿佛还带着建安文人的故事。",
+    "ai_prompt": "淡彩国风插画：一方古瓦砚摆在案头，瓦面带着斑驳古纹，背景隐约是高台与飞檐。",
+    "rarity": "典藏",
+    "channel": "anecdote"
+  },
+  {
+    "collection_id": "shuxu_bi",
+    "name": "战国楚笔",
+    "desc": "1954 年出土于长沙左家公山楚墓，是现存最早的毛笔实物。竹杆细长，兔箭毫缠在杆外再髹漆，全长二十一厘米。",
+    "ai_prompt": "淡彩国风插画：一支战国楚笔放在竹制笔筒旁，细长竹杆，笔头用丝线缠在杆外，案上摊着竹简，远处楚地山水淡淡。",
+    "rarity": "典藏",
+    "channel": "trial"
+  },
+  {
+    "collection_id": "ruyao_bixi",
+    "name": "汝窑天青笔洗",
+    "desc": "汝窑的笔洗，釉色像雨后初晴的天空，开片细密。洗笔时，清水在青瓷里晃出一层淡淡的雨色。",
+    "ai_prompt": "淡彩国风插画：汝窑天青笔洗盛着清水，釉面开片如冰裂，案上透着淡淡雨光。",
+    "rarity": "典藏",
+    "channel": "trial"
+  }
+]
