@@ -1,7 +1,7 @@
 # 内置字体
 
 两款字体都来自本机已安装的系统字体，按 **SIL Open Font License** 的常规做法
-裁成子集后随小程序分发。裁剪脚本见 `tools/collect-chars.mjs` + `_voice/subfont.py`。
+裁成子集后随小程序分发。裁剪脚本见 `tools/collect-chars.mjs`。
 
 | 文件 | 字体 | 来源 | 子集后大小 | 字符数 |
 |---|---|---|---|---|
@@ -18,15 +18,17 @@
 ## 为什么是 1301 而不是两万
 
 界面文案是我们自己写的，扫一遍源码就知道用到哪些字（`tools/collect-chars.mjs`）。
-用户自己输入的转盘选项、模组变量名用不到这两款字体，会回落到系统字体——
+用户自己输入的文本（模组变量名等）用不到这两款字体，会回落到系统字体——
 这是刻意的取舍：为了覆盖用户可能输入的任意汉字而多塞 2.7 MB 不值得。
 
 如果以后确实需要覆盖 GB2312 一级字库（3755 个常用字），运行：
 
 ```bash
 node tools/collect-chars.mjs --full
-/c/server/TTS/gsvenv/Scripts/python.exe _voice/subfont.py
 ```
+
+> 子集化用 fonttools（`pip install fonttools brotli`）。脚本路径因机器而异，
+> 历史上这里写死过本机路径，换机器就跑不通——现在不再记录具体路径。
 
 字体会变成 1.2 MB + 1.7 MB，合计 2.9 MB。改完记得重新评估包体。
 

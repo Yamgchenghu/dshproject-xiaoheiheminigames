@@ -1,56 +1,36 @@
-# 小黑盒工坊小程序
+# 复古游戏
 
-一套源码，两个小程序。原生 Android / Material Design 3 风格，无框架 UI。
+小黑盒工坊小程序。八款小游戏，原生 canvas 实现，Material Design 3 风格。
 
-| 小程序 | 版本 | 内容 |
+当前版本：**`1.4.4`** ｜ 小程序 ID：`01a1e9a3-2911-7083-87dc-f78931778505`
+
+> 版本号唯一真源是 `package.json` 的 `version`，构建时由 `vite.config.js` 注入到 `__APP_VERSION__`，
+> 设置页显示的就是实际提审的版本。仓库不打 GitHub Release，版本点用轻量 tag 标记。
+
+## 游戏
+
+| 游戏 | 模式 | 说明 |
 |---|---|---|
-| **复古游戏** | `1.4.4` | 扫雷、切水果、2048、贪吃蛇、合成大西瓜、流水入杯、诗山寻踪、东海龙珠 |
-| **学习与实用工具** | `1.2.9` | 云海转盘、诗山寻踪、单词机 |
+| 扫雷 | 初级 9×9 / 中级 15×15 / 高级 21×15 | 排掉全部地雷，用时越短越好 |
+| 切水果 | 经典 / 限时 1 分钟 / 限时 2 分钟 / 休闲 | 划开水果刷分，⚡狂热 ❄冰冻 ×2双倍 +加时 |
+| 2048 | 经典 4×4 / 5×5 / 菱形 | 合并相同数字，拼出 2048 |
+| 贪吃蛇 | 经典 / 穿墙 / 迷宫 / 多人 | 吃果实变长，别撞到自己 |
+| 合成大西瓜 | 经典 / 纯观战 | 落下水果，同级相碰合成更大的一颗 |
+| 流水入杯 | 14 关 | 画线接水，把杯子接满（240Hz 定步长物理） |
+| 诗山寻踪 | 长线流程 | 抄诗、闯关、收集（Phaser 3） |
+| 东海龙珠 | 经典 | 2.5D 推币机：九孔 + 转奖盘 + 派对时间 + 周榜 |
 
-> 版本号唯一真源是 `package.json` / `package.games.json` / `package.tools.json` 的 `version` 字段，
-> 构建时由 `vite.config.js` 注入到 `__APP_VERSION__`，设置页显示的就是实际提审的版本。
-> 仓库不打 GitHub Release，版本点用轻量 tag 标记。
+## 为什么没有联网权限
 
-## 为什么是两个小程序
+这是一个死结的解法。原项目申请了 `network`，平台因此把小程序判定为 **server 模式**，
+而 server 模式下 `user.getInfo()` 被平台禁用——文档写得很清楚：
+「第三方小程序进入联网的 server 模式后不能调用本方法获取身份」，
+要拿昵称头像必须自建服务端换票。我们没有服务端，所以登录态永远读不到，
+三轮「修复」都没用，因为方向本身是错的。
 
-根因是一个死结：本项目申请了 `network`（联网）权限，平台因此把小程序判定为 **server 模式**。
-而 server 模式下 `user.getInfo()` 被平台禁用——文档写得很清楚：「第三方小程序进入联网的 server 模式后
-不能调用本方法获取身份」，要拿昵称头像必须自建服务端换票。我们没有服务端，
-所以登录态永远读不到，三轮「修复」都没用，因为方向本身是错的。
+解法不是继续修，而是**不申请 `network`** → 回到 host 模式 → `user.getInfo()` 可用 → 真登录。
 
-解法不是继续修，而是把不需要联网的部分拆出去：
-
-- **复古游戏** 不申请 `network` → 回到 host 模式 → `user.getInfo()` 可用 → **真登录**。
-- **学习与实用工具** 需要联网（单词机 AI 整理、诗山朗读），保持现状。
-
-两个变体的差异**全部集中在 `src/core/variant.js`**，一眼能看全到底哪里不同：
-
-    export const FEATURES = {
-      wordMachine: IS_TOOLS,   // 单词机：AI 整理、在线朗读
-      shishan:     IS_TOOLS,   // 诗山寻踪：朗读需要网络
-      wheel:       IS_TOOLS,   // 云海转盘：纯本地随机
-      games:       IS_GAMES,   // 小游戏只在游戏版
-      leaderboard: IS_GAMES,   // 只有游戏版有榜
-      login:       IS_GAMES,   // 只有游戏版需要身份
-      mods:        IS_GAMES,   // 模组实验室只给游戏版
-    };
-
-变体由 `package.json` 的 `heybox.name` 推断（「复古游戏」即 games），不再依赖环境变量——
-环境变量是隐形状态，忘传一次就会把工具版界面传到游戏服上，这个事故真实发生过。
-
-    node tools/use-variant.mjs games    # 切到复古游戏
-    node tools/use-variant.mjs tools    # 切到学习与实用工具
-    node tools/use-variant.mjs status   # 查看当前绑定
-
-## 分支
-
-| 分支 | 对应小程序 | 说明 |
-|---|---|---|
-| `main` | 复古游戏 | 小游戏主体：游戏引擎、排行榜、模组实验室、量化总分 |
-| `study` | 学习与实用工具 | 转盘、诗山寻踪、单词机 |
-
-两个分支按现有两个小程序的划法划分，各自是完整可构建的状态。
-共享层（存档、压缩、SDK 封装、UI 外壳、MD3 样式）两边都有。
+需要联网的功能迁到另一个小程序（`study` 分支），本分支不申请该权限。
 
 ## 目录结构
 
@@ -60,14 +40,13 @@
         pack.js      纯 ASCII 打包（让「按字节切块」等于「按字符切块」）
         quantize.js  量化总分（基准 100，高于基准取对数，低于基准线性）
         audio.js     BGM 单例 + 音效
-        variant.js   两个小程序的全部差异都在这里
+        savever.js   存档版本闸门
       sdk/           hb-sdk 封装（存储 / 文件 / 榜单 / 账号）
       games/         五款 canvas 游戏，统一实例契约（tick + draw）
+        snake-bgm.js 贪吃蛇的实时合成 BGM（BPM 随吃到果实加快）
       tools/
-        wheel/       云海转盘（引擎 / 存档 / ZIP2.0 格式 / 语音 / 界面）
-        danciji/     单词机（词表 / 课文 / 学习记录三域存档 + AI 整理）
         liushui/     流水入杯（Java 物理移植 + canvas 界面 + 14 关）
-        donghai/     东海龙珠（2.5D 推币机，九孔 + 转盘 + 周榜）
+        donghai/     东海龙珠（2.5D 推币机，九孔 + 转奖盘 + 周榜）
       shishan/       诗山寻踪（Phaser 3 长线流程）
       mod/           Python 注入（词法 → 语法 → 生成器解释器 → Worker）
       ui/            外壳与各标签页
@@ -89,9 +68,7 @@
 子集化流程见 `tools/collect-chars.mjs`：它扫描源码里出现的所有汉字，只保留用到的字形。
 **新增中文文案后要重跑**，否则新字会 fallback 成系统字体。
 
-## 成绩与排行榜
-
-### 量化总分
+## 量化总分
 
 每局分数先按模式的**基准分**量化，再跨模式相加成一个总分榜：
 
@@ -157,8 +134,6 @@
 
 ## 测试
 
-    合计 600+ 条断言，21 个套件
-
 | 套件 | 覆盖 |
 |---|---|
 | `test-save.mjs` | 分域分块存档、压缩往返、截断、FNV 校验 |
@@ -187,17 +162,16 @@ Python 脚本能任意改分数。允许带模组的对局上榜等于榜单作�
 `env(safe-area-inset-*)` 在宿主 iframe 里恒为 0，必须在启动时读
 `viewport.getWindowInfo().statusBarHeight` 写进 CSS 变量。实测状态栏 84px。
 
-### 字体体积
+### 东海龙珠的移植保护
 
-中文字体全量太大，`tools/collect-chars.mjs` 扫描源码里出现的所有汉字做子集化。
-新增中文文案后要重跑，否则新字会 fallback 成系统字体。
+推币机是从上游包体移植的。上游更新会覆盖改动，所以做了三层保护：
+`docs/donghai-fork.md` 记录所有改动、`tools/check-donghai-fork.mjs` 44 条断言校验、
+`game.js` 顶部 `⚠️` 警告块。**更新上游包体前先跑 `check-donghai-fork`。**
 
 ## 文档
 
 - `docs/mod-parameters.md` —— 模组参数手册（每个参数的属性与效果）
 - `docs/donghai-fork.md` —— 东海龙珠移植记录与「不被上游覆盖」的三层保护
-- `docs/voice-template.md` —— 朗读模板与占位符说明
-- `docs/publish-notes.md` —— 提审说明与规则自查
 - `public/fonts/README.md` —— 字体来源、子集化、授权说明
 - `src/tools/liushui/README.md` —— 流水入杯玩法与物理说明
 
