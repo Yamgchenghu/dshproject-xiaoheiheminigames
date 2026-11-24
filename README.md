@@ -172,6 +172,7 @@ Python 脚本能任意改分数。允许带模组的对局上榜等于榜单作�
 
 - `docs/mod-parameters.md` —— 模组参数手册（每个参数的属性与效果）
 - `docs/donghai-fork.md` —— 东海龙珠移植记录与「不被上游覆盖」的三层保护
+- `docs/publish-notes.md` —— 提审说明、合规边界、提审前检查清单
 - `public/fonts/README.md` —— 字体来源、子集化、授权说明
 - `src/tools/liushui/README.md` —— 流水入杯玩法与物理说明
 
