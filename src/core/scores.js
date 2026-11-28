@@ -55,6 +55,9 @@ const SHORT = {
   //   test-quantize.mjs 的「短键与存档一致」断言就是防这个的，
   //   但它当时只比对了已登记的游戏，没覆盖到漏登记的情况。
   donghai: 'dh',
+  // 一杆清台：存的是「每局表现分」（见 tools/yigan/scoring.js）。
+  // 分数是整数（computeRunScore 已经 Math.round），所以不进 FRACTIONAL_GAMES。
+  yigan: 'yg',
   // 流水入杯的「得分」（= 滴数 − 190），供综合总榜累加。
   // 【为什么不能直接用 ls.*】ls.* 存的是滴数，190 滴是"刚好达标"，
   //   当成 190 分会虚高；而且关卡解锁判定依赖滴数 >= 190，

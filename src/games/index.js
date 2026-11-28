@@ -10,6 +10,7 @@ import * as snake from './snake.js';
 import * as fruitninja from './fruitninja.js';
 import * as watermelon from './watermelon.js';
 import { LEVELS } from '../tools/liushui/levels.js';
+import { MODES as YIGAN_MODES } from '../tools/yigan/scoring.js';
 
 const MODULES = [minesweeper, fruitninja, g2048, snake, watermelon];
 
@@ -94,8 +95,33 @@ export const DONGHAI_META = {
   modes: [{ value: 'classic', label: '经典', sub: '每币平均彩票' }],
 };
 
+
+/**
+ * 一杆清台：HTML5 台球。
+ *
+ * 【为什么单独一条，且不进 GAMES】
+ *   它自带完整的 DOM 界面（开始页 / 设置 / 回放 / 开发者终端）和
+ *   自己的 requestAnimationFrame 循环，不是 tick+draw 那套契约。
+ *   硬塞进 game-screen 要把界面层整个重写，手感也会变。
+ *   所以和流水入杯、诗山寻踪、东海龙珠一样，只登记元信息，
+ *   实际打开走 openYiganScreen。
+ *
+ * 【它和另外三个特殊游戏的区别】
+ *   流水入杯是关卡制、诗山是长线流程、东海龙珠没有终点；
+ *   一杆清台是**有明确一局**的（分出胜负就结束），所以它能进排行榜，
+ *   计分走 scoring.js 的 computeRunScore。
+ */
+export const YIGAN_META = {
+  id: 'yigan',
+  title: '一杆清台',
+  sub: '真实碰撞物理，四种台球玩法',
+  accent: '#3fa96b',
+  /** 标记：这一项要走 openYiganScreen */
+  isBilliardsGame: true,
+  modes: YIGAN_MODES,
+};
 /** 「游戏」页与「我的」页展示的全部游戏 */
-export const ALL_GAMES = [...GAMES, LIUSHUI_META, SHISHAN_META, DONGHAI_META];
+export const ALL_GAMES = [...GAMES, LIUSHUI_META, SHISHAN_META, DONGHAI_META, YIGAN_META];
 
 export function metaOf(id) {
   for (const m of MODULES) if (m.meta.id === id) return m.meta;
@@ -112,9 +138,10 @@ export function anyMetaOf(id) {
   if (id === LIUSHUI_META.id) return LIUSHUI_META;
   if (id === SHISHAN_META.id) return SHISHAN_META;
   if (id === DONGHAI_META.id) return DONGHAI_META;
+  if (id === YIGAN_META.id) return YIGAN_META;
   return metaOf(id);
 }
 
 export default {
-  GAMES, ALL_GAMES, LIUSHUI_META, SHISHAN_META, DONGHAI_META, create, metaOf, anyMetaOf,
+  GAMES, ALL_GAMES, LIUSHUI_META, SHISHAN_META, DONGHAI_META, YIGAN_META, create, metaOf, anyMetaOf,
 };

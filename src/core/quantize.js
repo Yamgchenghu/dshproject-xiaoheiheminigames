@@ -64,6 +64,20 @@ export const BASES = Object.freeze({
   //     不会像 2048 那样出现几百分的极端值。
   'donghai:classic': 45 / 8,
 
+  // 一杆清台：分数由 tools/yigan/scoring.js 的 computeRunScore 算出，
+  //   公式 = 模式基础分 × 结果系数（赢 1 / 输 0.3）×（0.5 + 效率）× 难度系数。
+  //   【基准怎么来的】以标准难度、正常发挥（每球约 2 杆 → 效率 0.5）算：
+  //     八球赢 = 100 × 1 × 1.0 × 1.0 = 100，正好落在基准上。
+  //     所以四种模式的基准就是各自的模式基础分：
+  //     八球 100、九球 120、轮转 140、斯诺克 180。
+  //   【为什么斯诺克基准最高】它球最多（22 颗）、规则最繁、一局最长，
+  //     同样的每球杆数在斯诺克里明显更难做到。
+  //     基准高意味着它天然贡献更多总分——这是刻意的，鼓励玩难的模式。
+  'yigan:8ball': 100,
+  'yigan:9ball': 120,
+  'yigan:rotation': 140,
+  'yigan:snooker': 180,
+
   // 切水果：普通水果 1 分、蓝莓 2 分，一局经典大约 60~120 个
   'fruitninja:classic': 120,
   // 限时 1 分钟：节奏快但时间短
@@ -314,6 +328,7 @@ export const SHORT_KEYS = Object.freeze({
   snake: 'sn',
   watermelon: 'wm',
   donghai: 'dh',
+  yigan: 'yg',
   liushui: 'ls',
   liushui_q: 'lsq',
 });
@@ -331,5 +346,8 @@ export const MODE_KEYS = Object.freeze({
   //   【为什么它进这张表】用户要求"推币机也计入综合总分榜"，
   //   而综合总分是全部模式量化分的累加——不进表就等于不参与。
   donghai: ['classic'],
+  // 一杆清台：四种玩法各自一个模式，分数是每局表现分（见 tools/yigan/scoring.js）。
+  //   四种模式难度差很大（八球 100 基准、斯诺克 180），所以分开登记、分开量化。
+  yigan: ['8ball', '9ball', 'rotation', 'snooker'],
   liushui: ['lv1','lv2','lv3','lv4','lv5','lv6','lv7','lv8','lv9','lv10','lv11','lv12','lv13','lv14'],
 });

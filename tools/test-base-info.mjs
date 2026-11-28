@@ -103,7 +103,7 @@ section('页面必须覆盖量化表里的每个游戏');
   // 页面确实为这些游戏单独补了行，所以只要它们能在 ALL_GAMES 里查到基准分即可
   for (const id of missingFromPage) {
     const meta = ALL_GAMES.find((g) => g.id === id);
-    if (id === 'liushui' || id === 'donghai') {
+    if (id === 'liushui' || id === 'donghai' || id === 'yigan') {
       ok(id + ' 有单独补的行', true);
       if (meta) {
         for (const mode of MODE_KEYS[id]) {

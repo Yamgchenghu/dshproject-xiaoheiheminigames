@@ -17,6 +17,7 @@ import { openGameScreen } from './game-screen.js';
 import { openLiushuiScreen } from '../tools/liushui/screen.js';
 import { openShishanScreen } from './shishan-screen.js';
 import { openDonghaiScreen } from '../tools/donghai/screen.js';
+import { openYiganScreen } from '../tools/yigan/screen.js';
 import { openWordGameScreen } from '../tools/danciji/screen.js';
 
 const EMOJI = {
@@ -123,6 +124,13 @@ export function renderToolsTab(state, rerender, opts = {}) {
           openDonghaiScreen({ onExit: () => rerender() });
           return;
         }
+        // 一杆清台：模式选择在它自己的开始页里（原版的 mode-seg），
+        //   不像别的游戏要先在外壳选模式再进去。
+        //   它有明确的一局（分出胜负就结束），所以结算后要记分。
+        if (g.isBilliardsGame) {
+          openYiganScreen({ onExit: () => rerender() });
+          return;
+        }
         openModePicker(g, (mode) => {
           openGameScreen({
             meta: g,
@@ -136,7 +144,7 @@ export function renderToolsTab(state, rerender, opts = {}) {
     }, [
       h('span', { class: 'hg-emoji' }, EMOJI[g.id] || '🎮'),
       h('span', { class: 'hg-name' }, g.title),
-      h('span', { class: 'hg-sub' }, g.isStoryGame ? '诗卷 · 长线' : g.isCoinGame ? '推币 · 周榜' : g.modes.length + ' 种模式'),
+      h('span', { class: 'hg-sub' }, g.isStoryGame ? '诗卷 · 长线' : g.isCoinGame ? '推币 · 周榜' : g.isBilliardsGame ? '台球 · 四种玩法' : g.modes.length + ' 种模式'),
     ]));
   }
   box.appendChild(games);
