@@ -1,0 +1,68 @@
+{
+  "name": "pool-billiards",
+  "version": "1.4.46-2",
+  "private": true,
+  "type": "module",
+  "description": "小黑盒工坊小程序：一杆清台（桌球完整版）",
+  "heybox": {
+    "miniProgramId": "01a2213e-5460-7038-be80-081430208a42",
+    "name": "一杆清台",
+    "desc": "一杆清台：八球 / 九球 / 十球 / 轮转 / 斯诺克 / 6红球六种玩法。接入国内大模型，AI 对手会在沙箱里推演再出杆；也可以让两个 AI 互相对打，看它们怎么拆局。",
+    "category": "other",
+    "icon": "assets/icon.png",
+    "coverImages": [
+      "assets/cover.png"
+    ],
+    "platforms": [
+      "android",
+      "ios",
+      "ohos",
+      "windows",
+      "macos"
+    ],
+    "permissions": {
+      "userInfo": {
+        "enabled": true
+      },
+      "storage": {
+        "enabled": true
+      },
+      "cloud_storage": {
+        "enabled": true
+      },
+      "filesystem": {
+        "enabled": true
+      },
+      "share": {
+        "enabled": true
+      },
+      "leaderboard": {
+        "enabled": true
+      },
+      "network": {
+        "enabled": true,
+        "useOfficialDomain": false
+      }
+    }
+  },
+  "scripts": {
+    "hb-sdk": "hb-sdk",
+    "dev": "hb-sdk dev",
+    "dev:vite": "vite",
+    "build": "hb-sdk build",
+    "deploy": "hb-sdk remote deploy",
+    "gen:bgm": "node tools/gen-bgm.mjs",
+    "gen:images": "node tools/gen-images.mjs",
+    "gen:chars": "node tools/collect-chars.mjs",
+    "gen:voice": "node tools/copy-voice.mjs",
+    "test": "node tools/test-save.mjs && node tools/test-liushui.mjs && node tools/test-python.mjs && node tools/test-boards.mjs && node tools/test-account.mjs && node tools/test-quantize.mjs && node tools/test-games.mjs && node tools/test-handshake.mjs && node tools/test-artwork.mjs && node tools/test-provider-models.mjs && node tools/test-variant-isolation.mjs && node tools/test-mod-toggle.mjs && node tools/check-pool-fork.mjs && node tools/test-base-info.mjs && node tools/test-fonts.mjs && node tools/test-fruitninja.mjs"
+  },
+  "dependencies": {
+    "@heybox/hb-sdk": "^0.9.8",
+    "phaser": "^3.90.0"
+  },
+  "devDependencies": {
+    "lamejs": "^1.2.1",
+    "vite": "^8.0.12"
+  }
+}

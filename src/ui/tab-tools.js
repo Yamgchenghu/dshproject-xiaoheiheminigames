@@ -18,6 +18,7 @@ import { openLiushuiScreen } from '../tools/liushui/screen.js';
 import { openShishanScreen } from './shishan-screen.js';
 import { openDonghaiScreen } from '../tools/donghai/screen.js';
 import { openWordGameScreen } from '../tools/danciji/screen.js';
+import { openRailScreen } from '../tools/rail/screen.js';
 
 const EMOJI = {
   minesweeper: '💣', fruitninja: '🍉', g2048: '🔢', snake: '🐍', liushui: '💧',
@@ -85,6 +86,19 @@ export function renderToolsTab(state, rerender, opts = {}) {
     h('div', { style: { flex: '1', textAlign: 'left' } }, [
       h('h3', {}, '单词机'),
       h('p', {}, '背单词 · 背课文 · 生词本 · 离线可用'),
+    ]),
+    h('div', { class: 'chev' }, '›'),
+  ]));
+
+  grid.appendChild(h('button', {
+    class: 'tool-card',
+    style: { '--hero-accent': '#e0728f' },
+    onclick: () => openRailScreen({ onExit: () => rerender() }),
+  }, [
+    h('div', { class: 'tool-art', style: { background: '#e0728f1f', borderColor: '#e0728f44' } }, '🎫'),
+    h('div', { style: { flex: '1', textAlign: 'left' } }, [
+      h('h3', {}, '火车票根'),
+      h('p', {}, '仿真实体票面 · 可导出图片 · 离线可用'),
     ]),
     h('div', { class: 'chev' }, '›'),
   ]));

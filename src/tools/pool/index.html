@@ -1,0 +1,431 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<meta name="theme-color" content="#07100c">
+<link rel="icon" href="icon.png">
+<title>一杆清台</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="app" id="poolApp">
+  <main class="stage" id="stage">
+    <canvas id="felt" aria-label="台球桌"></canvas>
+
+    <div class="stage-top">
+      <div class="brand">
+        <div class="logo-ball"><span>8</span></div>
+        <div class="brand-text">
+          <h1>一杆清台</h1>
+          <span id="modeTag">经典八球</span>
+        </div>
+      </div>
+      <div class="top-actions">
+        <button class="icon-btn" id="btnSound" aria-label="音效" aria-pressed="true">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9.5v5h3.6L13 19V5L7.6 9.5H4z"/><path class="wave" d="M16 8.6a5 5 0 010 6.8"/><path class="wave" d="M18.4 6a8.6 8.6 0 010 12"/><path class="mute" d="M4 4l16 16"/></svg>
+        </button>
+        <button class="icon-btn on" id="btnAim" aria-label="辅助线" aria-pressed="true">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="5.2"/><path d="M12 2v4M12 18v4M2 12h4M18 12h4"/><circle cx="12" cy="12" r="1.1" class="fill"/></svg>
+        </button>
+        <button class="icon-btn" id="btnMenu" aria-label="菜单">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+        </button>
+      </div>
+    </div>
+
+    <div class="banner" id="banner"><b></b><span></span></div>
+    <div class="ai-badge" id="aiBadge"><i></i><span>AI 正在思考</span></div>
+    <div class="hint-bar" id="hintBar">拖动桌面瞄准 · 右侧球杆下滑击球</div>
+    <div class="hand-hint" id="handHint">拖动白球，放到合适的位置</div>
+
+    <div class="cue-dock" id="cueDock" aria-label="球杆控制">
+      <div class="dock-top">
+        <span>微调</span>
+        <button id="fineReset" aria-label="角度归零" title="角度归零">↺</button>
+      </div>
+      <div class="fine-knob" id="fineKnob" role="slider" tabindex="0"
+           aria-label="上下滑动微调角度" aria-valuemin="-20" aria-valuemax="20" aria-valuenow="0">
+        <i></i>
+      </div>
+      <div class="cue-track" id="cueTrack" role="slider" tabindex="0"
+           aria-label="向下滑动球杆，滑动越长力度越大" aria-valuemin="10" aria-valuemax="100" aria-valuenow="10">
+        <div class="cue-fill" id="cueFill"></div>
+        <div class="cue-stick" id="cueStick">
+          <span class="cue-tip"></span>
+          <span class="cue-shaft"></span>
+          <span class="cue-wrap"></span>
+          <span class="cue-butt"></span>
+        </div>
+      </div>
+      <div class="dock-power"><span>力度</span></div>
+      <div class="dock-hint" id="dockHint">下滑击球</div>
+    </div>
+  </main>
+
+  <aside class="panel">
+    <div class="panel-head">
+      <span class="panel-kicker">MATCH</span>
+      <span class="rule-tag" id="ruleTag">8-BALL</span>
+    </div>
+
+    <div class="scoreboard" id="scoreboard"></div>
+
+    <div class="match-box">
+      <div class="match-line" id="matchStatus">准备开球</div>
+      <div class="target-line" id="targetLine">目标：任意球</div>
+    </div>
+
+    <div class="swing-card">
+      <div class="swing-arrow">↓</div>
+      <div class="swing-text">
+        <b>下滑球杆击球</b>
+        <span>滑动越长 · 力度越大</span>
+      </div>
+    </div>
+    <div class="fine-tip"><span>↕</span> 竖杆顶部旋钮：上下滑动微调方向</div>
+
+    <div class="log" id="log"></div>
+
+    <div class="panel-foot">
+      <button id="btnNew"><span>↻</span> 新一局</button>
+      <button id="btnSettings"><span>⚙</span> 设置</button>
+    </div>
+  </aside>
+</div>
+
+<!-- 欢迎页 -->
+<div class="overlay show" id="welcome">
+  <div class="welcome-card">
+    <div class="welcome-glow"></div>
+    <div class="eyebrow">PHYSICS POOL · DSH</div>
+    <h1>一杆清台</h1>
+    <p class="sub">真实碰撞物理 · 完整规则 · 本地 AI 与大模型对手</p>
+
+    <div class="welcome-block">
+      <label>玩法</label>
+      <div class="segment mode-seg">
+        <button data-mode="8ball" class="active"><b>经典八球</b><small>全色 / 花色 / 黑八</small></button>
+        <button data-mode="9ball"><b>九球</b><small>1 → 9 顺序</small></button>
+        <button data-mode="rotation"><b>轮转</b><small>最低球先碰</small></button>
+        <button data-mode="snooker"><b>斯诺克</b><small>红球 / 彩球 / 计分</small></button>
+      </div>
+    </div>
+
+    <div class="welcome-block">
+      <label>对局</label>
+      <div class="seat-setup">
+        <div class="seat-row">
+          <span class="seat-tag">P1</span>
+          <select id="seat0Type" aria-label="玩家1类型"></select>
+          <select id="seat0Difficulty" class="seat-diff" aria-label="玩家1难度">
+            <option value="easy">休闲</option><option value="normal">标准</option><option value="master">专家</option>
+          </select>
+          <select id="seat0Think" class="seat-think" aria-label="玩家1思考深度（API参数）" title="思考深度（API参数）"></select>
+        </div>
+        <div class="seat-row">
+          <span class="seat-tag">P2</span>
+          <select id="seat1Type" aria-label="玩家2类型"></select>
+          <select id="seat1Difficulty" class="seat-diff" aria-label="玩家2难度">
+            <option value="easy">休闲</option><option value="normal">标准</option><option value="master">专家</option>
+          </select>
+          <select id="seat1Think" class="seat-think" aria-label="玩家2思考深度（API参数）" title="思考深度（API参数）"></select>
+        </div>
+      </div>
+      <div class="api-note" id="welcomeApiNote">沙箱次数由难度决定（休闲 0 / 标准 1 / 专家 5）；思考深度作为 API 参数。</div>
+    </div>
+
+    <div class="welcome-actions">
+      <button class="primary" id="startGame">开始对局</button>
+      <button class="ghost" id="welcomeLan">局域网</button>
+      <button class="ghost" id="welcomeReplay">回放</button>
+      <button class="ghost" id="welcomeSettings">设置</button>
+    </div>
+    <div class="fineprint">API Key 只保存在本机 WebView，不会上传到第三方服务器。</div>
+  </div>
+</div>
+
+<!-- 菜单 -->
+<div class="overlay" id="menuModal">
+  <div class="modal small">
+    <div class="modal-head"><h2>暂停</h2><button class="x" data-close="menuModal">✕</button></div>
+    <div class="menu-list">
+      <button id="resumeBtn"><span>▶</span><b>继续对局</b><small>回到球桌</small></button>
+      <button id="menuNew"><span>↻</span><b>重新开局</b><small>当前比分将清空</small></button>
+      <button id="menuSettings"><span>⚙</span><b>设置</b><small>模式、对手与 API</small></button>
+      <button id="menuRules"><span>?</span><b>玩法说明</b><small>八球与斯诺克规则</small></button>
+      <button id="menuLan"><span>⇄</span><b>局域网联机</b><small>开服或加入房间</small></button>
+      <button id="menuReplay" hidden><span>▶</span><b>回放</b><small>最近的对局</small></button>
+      <button id="menuTerm" hidden><span>$</span><b>开发者终端</b><small>$shell · #root</small></button>
+      <button id="menuExit"><span>⏻</span><b>退出游戏</b><small>关闭 App</small></button>
+    </div>
+  </div>
+</div>
+
+<!-- 设置 -->
+<div class="overlay" id="settingsModal">
+  <div class="modal settings">
+    <div class="modal-head settings-head">
+      <div class="settings-title"><div class="eyebrow">SETTINGS</div><h2>设置</h2></div>
+      <div class="settings-tabs" id="settingsTabs">
+        <button data-tab="match" class="active">对局</button>
+        <button data-tab="api">大模型</button>
+      </div>
+      <button class="x" data-close="settingsModal">✕</button>
+    </div>
+    <div class="settings-scroll">
+      <section data-pane="match">
+        <h3>对局</h3>
+        <div class="field-row">
+          <label class="field"><span>玩法模式</span>
+            <select id="setMode"><option value="8ball">经典八球</option><option value="9ball">九球</option><option value="rotation">轮转追分</option><option value="snooker">斯诺克（简化）</option></select>
+          </label>
+          <label class="field"><span>对手</span>
+            <select id="setOpponent"><option value="local">本地 AI</option><option value="api">大模型 API</option><option value="human">双人同机</option><option value="lan">局域网联机</option></select>
+          </label>
+        </div>
+        <div class="field-row">
+          <label class="field"><span>AI 难度</span>
+            <select id="setDifficulty"><option value="easy">休闲</option><option value="normal">标准</option><option value="master">大师</option></select>
+          </label>
+          <div class="field switches">
+            <span>辅助</span>
+            <label class="switch"><input type="checkbox" id="setAim"><i></i><em>瞄准线</em></label>
+            <label class="switch"><input type="checkbox" id="setSound"><i></i><em>音效</em></label>
+          </div>
+        </div>
+      </section>
+
+      <section class="api-section" data-pane="api">
+        <h3>大模型对手 <span>OpenAI 兼容 / Anthropic</span></h3>
+        <div id="apiFields">
+          <div class="ai-profile-bar">
+            <label>AI 配置 <select id="aiProfileSelect"></select></label>
+            <button type="button" id="aiProfileAdd">新增</button>
+            <button type="button" id="aiProfileDel">删除</button>
+          </div>
+          <label class="field"><span>显示名称</span><input id="setAiName" type="text" autocomplete="off" spellcheck="false" placeholder="AI 1"></label>
+          <div class="field-row">
+            <label class="field"><span>服务商</span>
+              <select id="setProvider"></select>
+            </label>
+            <label class="field"><span>协议</span>
+              <select id="setProtocol"><option value="openai">OpenAI 兼容</option></select>
+            </label>
+          </div>
+          <label class="field"><span>Base URL</span><input id="setBase" type="url" autocomplete="off" spellcheck="false" readonly placeholder="https://api.deepseek.com/v1"></label>
+          <p class="filed-note">只能使用已完成 ICP 备案的国内接口。填其他域名会被拦截，并提示「小黑盒小程序不兼容无备案的域名，无法操作」。</p>
+          <div class="field-row api-model-row">
+            <label class="field"><span>模型</span><input id="setModel" type="text" autocomplete="off" spellcheck="false" placeholder="deepseek-v4-flash" list="modelOptions"><datalist id="modelOptions"></datalist><div class="chips" id="modelChips"></div></label>
+            <label class="field"><span>API Key</span><div class="key-wrap"><input id="setKey" type="password" autocomplete="off" spellcheck="false" placeholder="sk-…"><button type="button" id="toggleKey">显示</button></div></label>
+          </div>
+          <div class="api-actions">
+            <button id="fetchModels">拉取模型</button>
+            <button id="testApi">测试连接</button>
+            <span id="apiStatus">Key 仅保存在本机</span>
+          </div>
+        </div>
+      </section>
+      <section class="about">
+        <h3>关于</h3>
+        <div class="about-row">
+          <span>一杆清台</span>
+          <button type="button" id="versionTap" title="连续点击 7 次开启开发者模式">v1.4.15</button>
+          <span id="devState">开发者模式未开启</span>
+        </div>
+        <button type="button" id="devOpenTerm" class="ghost dev-open" hidden>打开 $shell</button>
+      </section>
+      <p class="fineprint">修改模式或对手后，保存会开始新的一局。大模型只负责从合法候选中选杆，几何计算由本地引擎完成。</p>
+    </div>
+    <div class="modal-actions">
+      <button class="ghost" id="settingsHome">返回主页</button>
+      <button class="ghost" data-close="settingsModal">取消</button>
+      <button class="primary" id="saveSettings">保存并开局</button>
+    </div>
+  </div>
+</div>
+
+<!-- 规则 -->
+<div class="overlay" id="rulesModal">
+  <div class="modal rules">
+    <div class="modal-head"><h2>玩法说明</h2><button class="x" data-close="rulesModal">✕</button></div>
+    <div class="rules-scroll">
+      <h3>经典八球</h3>
+      <p>开球后球桌为开放状态，第一颗合法入袋的球决定你的组别：全色（1–7）或花色（9–15）。清完本组后打进黑八获胜。提前打进黑八、打黑八时白球落袋、或先碰到对方的球，都会判负或犯规。</p>
+      <h3>九球</h3>
+      <p>按 1 到 9 的顺序，每一杆必须先碰台面上号码最小的球。任何球入袋都可以继续击球；9 号球在任何合法击球中入袋即获胜。犯规后对手获得自由球。</p>
+      <h3>轮转追分</h3>
+      <p>15 颗球，每杆必须先碰号码最小的球，但可以打进任意球并得到该球号码的分数。先到 61 分获胜；如果球全部打完还没到 61 分，分高者胜。</p>
+      <h3>斯诺克</h3>
+      <p>红球 1 分，黄 2、绿 3、咖啡 4、蓝 5、粉 6、黑 7。红球与彩球交替击打；还有红球时彩球入袋会重摆。红球清完后按分值从低到高打彩球。犯规会送给对手至少 4 分。</p>
+      <h3>操作</h3>
+      <p>在桌面上拖动瞄准。右侧竖杆：向下滑动蓄力，松手击球，滑动越长力度越大。杆上方的旋钮上下滑动可微调角度，↺ 归零。力度完全由下滑距离决定，不显示数字；AI 回合、球滚动或自由球未摆放时球杆区会禁用。犯规后获得自由球，拖动白球到合法位置即可。开启辅助线会显示假想球、目标球去向、白球撞击后约 3cm 的青色偏转参考线，以及库边反射。斯诺克中当前可打的球会有金色标记。</p>
+      <h3>局域网联机</h3>
+      <p>同一 Wi-Fi 下，一方“开服”后把屏幕上的 IP:端口 告诉另一方，另一方“加入”。房主先手，双方各自在手机上看到同一张球桌；房主负责物理与规则判定。</p>
+      <h3>对手</h3>
+      <p>本地 AI 会枚举所有“目标球 × 袋口”组合，检查遮挡、切球角度和走位风险，再按难度加入误差。接入大模型时，本地引擎先把合法候选算好，模型只做战术选择。</p>
+    </div>
+    <div class="modal-actions"><button class="primary" data-close="rulesModal">知道了</button></div>
+  </div>
+</div>
+
+<!-- 结算 -->
+<div class="overlay" id="overModal">
+  <div class="modal over">
+    <div class="over-emblem" id="overEmblem">🏆</div>
+    <div class="eyebrow" id="overEyebrow">FRAME OVER</div>
+    <h2 id="overTitle">你赢了</h2>
+    <p id="overSub">清台成功</p>
+    <div class="over-score" id="overScore"></div>
+    <div class="modal-actions">
+      <button class="ghost" id="overReplay">回放</button>
+      <button class="ghost" id="overMenu">返回菜单</button>
+      <button class="primary" id="overAgain">再来一局</button>
+    </div>
+  </div>
+</div>
+
+<!-- 局域网联机 -->
+<div class="overlay" id="lanModal">
+  <div class="modal lan">
+    <div class="modal-head">
+      <div><div class="eyebrow">LAN PLAY</div><h2>局域网联机</h2></div>
+      <button class="x" data-close="lanModal">✕</button>
+    </div>
+    <div class="lan-tabs" id="lanTabs">
+      <button data-lan-tab="host" class="active">开服</button>
+      <button data-lan-tab="join">加入</button>
+    </div>
+    <label class="lan-web-toggle"><input type="checkbox" id="lanWebMode"><i></i><span>跨端联机（网页 / APK，PeerJS 配对码）</span></label>
+    <div class="lan-scroll">
+      <section data-lan-pane="host">
+        <p class="lan-lead">同一 Wi-Fi 下开一个房间，朋友输入地址加入。房主先手。</p>
+        <div class="field-row lan-start-row" id="lanPortRow">
+          <label class="field"><span>端口</span><input id="lanPort" type="number" inputmode="numeric" value="8765" min="1024" max="65535"></label>
+          <button id="lanHostBtn" class="primary">开启服务器</button>
+        </div>
+        <div id="lanWebHostRow" hidden><button id="lanWebHostBtn" class="primary">生成配对码</button></div>
+        <div class="lan-status" id="lanHostStatus">未开启</div>
+        <div class="lan-address" id="lanAddress">—</div>
+        <p class="lan-note">把上面的地址告诉朋友；需要同一局域网，且手机未被防火墙隔离。</p>
+      </section>
+      <section data-lan-pane="join" hidden>
+        <p class="lan-lead">输入房主屏幕上显示的地址。</p>
+        <label class="field"><span id="lanJoinLabel">主机地址</span><input id="lanJoinAddr" placeholder="192.168.1.10:8765" autocomplete="off" spellcheck="false"></label>
+        <label class="field"><span>你的名字</span><input id="lanJoinName" value="远程玩家" maxlength="12" autocomplete="off"></label>
+        <button id="lanJoinBtn" class="primary">连接服务器</button>
+        <div class="lan-status" id="lanJoinStatus">未连接</div>
+        <p class="lan-note">房主收到连接后会开始对局；连接失败请检查 IP、端口和 Wi-Fi。</p>
+      </section>
+    </div>
+    <div class="modal-actions">
+      <button class="ghost" id="lanHostNew" hidden>重新开局</button>
+      <button class="ghost" id="lanLeave" hidden>断开联机</button>
+      <button class="ghost" data-close="lanModal">关闭</button>
+    </div>
+  </div>
+</div>
+
+<!-- 导出选项 -->
+<div class="overlay" id="exportModal">
+  <div class="modal export-modal">
+    <div class="modal-head">
+      <div><div class="eyebrow">EXPORT</div><h2>导出回放</h2></div>
+      <button class="x" data-close="exportModal">✕</button>
+    </div>
+    <div class="export-scroll">
+      <p class="lan-lead">对局过程必选，其余按需导出。</p>
+      <label class="export-check"><input type="checkbox" checked disabled><span><b>对局过程</b><small>球局、击球、比分、胜负</small></span></label>
+      <label class="export-check"><input type="checkbox" id="exportSandbox" checked><span><b>模型沙箱</b><small>沙箱推演和桌台片段</small></span></label>
+      <label class="export-check"><input type="checkbox" id="exportThinking" checked><span><b>模型思考</b><small>模型返回的 reasoning / thinking 片段</small></span></label>
+      <label class="export-check"><input type="checkbox" id="exportApi" checked><span><b>模型调用详情</b><small>请求、响应、输出、token 用量；不含 API Key</small></span></label>
+      <label class="export-check"><input type="checkbox" id="exportFrames" checked><span><b>逐帧球位</b><small>关闭后文件更小，但回放不能逐帧移动</small></span></label>
+    </div>
+    <div class="modal-actions">
+      <button class="ghost" data-close="exportModal">取消</button>
+      <button class="primary" id="exportGo">导出 JSON</button>
+    </div>
+  </div>
+</div>
+
+<!-- 开发者终端 -->
+<div class="overlay" id="terminalModal">
+  <div class="modal terminal">
+    <div class="term-head">
+      <div class="term-titlebar">
+        <span class="term-app">LOCAL</span>
+        <h2><span id="termTitle">$shell</span></h2>
+        <span class="term-session">pts/0</span>
+      </div>
+      <button class="x" data-close="terminalModal">✕</button>
+    </div>
+    <div class="term-log" id="termLog"></div>
+    <div class="term-toolbar" id="termToolbar">
+      <button data-term-key="tab">TAB</button>
+      <button data-term-key="up">↑</button>
+      <button data-term-key="down">↓</button>
+      <button data-term-key="left">←</button>
+      <button data-term-key="right">→</button>
+      <button data-term-key="clear">CLR</button>
+      <span class="term-meta">UTF-8</span>
+    </div>
+    <div class="term-row">
+      <span class="term-prompt" id="termPrompt">$</span>
+      <input id="termInput" autocomplete="off" spellcheck="false" autocapitalize="off" placeholder="输入 help">
+      <button id="termRun">↵</button>
+    </div>
+    <div class="term-hint" id="termHint">开发者模式 · 输入 #root 获取更高权限</div>
+  </div>
+</div>
+
+<!-- 回放 -->
+<div class="replay-overlay" id="replayModal">
+  <div class="replay-top">
+    <div class="replay-brand">
+      <span class="replay-kicker">REPLAY</span>
+      <b id="replayTitle">对局回放</b>
+      <select id="replaySelect"></select>
+    </div>
+    <div class="replay-modes">
+      <button data-rmode="match" class="active">对局</button>
+      <button data-rmode="thinking">对局+沙箱</button>
+    </div>
+    <button id="replayGuide" class="active" title="显示击球辅助线">辅助线</button>
+    <button id="replayExport">导出 JSON</button>
+    <button class="x replay-x" id="replayClose">✕</button>
+  </div>
+  <div class="replay-caption" id="replayCaption"></div>
+  <div class="replay-transparent"></div>
+  <div class="replay-think-prompt" id="replayThinkPrompt" hidden>
+    <b>检测到模型思考片段</b>
+    <p id="replayThinkPromptText">是否在空白处显示？</p>
+    <div>
+      <button id="replayThinkShow">显示思考</button>
+      <button id="replayThinkTranslate" hidden>先翻译思考片段</button>
+      <button id="replayThinkHide">不显示</button>
+    </div>
+  </div>
+  <div class="replay-think-panel" id="replayThinkPanel" hidden>
+    <div class="rtp-head"><b id="replayThinkTitle">模型思考</b><span id="replayThinkMeta"></span><button id="replayThinkClose">✕</button></div>
+    <div class="rtp-body" id="replayThinkBody"></div>
+  </div>
+  <div class="replay-panel">
+    <div class="replay-controls">
+      <button id="replayPrev">◀</button>
+      <button id="replayPlay">▶</button>
+      <button id="replayNext">▶|</button>
+      <input type="range" id="replayRange" min="0" max="0" value="0">
+      <span id="replayCounter">0 / 0</span>
+    </div>
+    <div class="replay-body">
+      <div class="replay-info" id="replayInfo"></div>
+      <div class="replay-trace" id="replayTrace"></div>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+<script src="peerjs.min.js"></script>
+<script src="game.js"></script>
+</body>
+</html>

@@ -1,0 +1,130 @@
+/* 火车票根 —— 作用域全部收在 .rail-body 下，避免污染全局 */
+
+.rail-body {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 10px 12px 20px;
+  overflow-y: auto;
+}
+
+/* 预览区：画布固定 1890x1190，这里只用 CSS 缩放 */
+.rail-stage {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  padding: 6px 0;
+}
+
+.rail-frame {
+  width: 100%;
+  border-radius: 12px;
+  overflow: hidden;
+  background: #fff;
+  box-shadow: 0 6px 22px rgba(0, 0, 0, 0.45);
+  line-height: 0;
+}
+
+/* 【关键】canvas 只改显示尺寸，width/height 属性永远是 1890x1190。
+   一旦用 CSS 改了画布的内在尺寸，取整误差会让票面坐标整体偏移。 */
+.rail-canvas {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.rail-loading {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.55);
+  color: #fff;
+  font-size: 13px;
+  border-radius: 12px;
+}
+
+/* 表单 */
+.rail-form {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.rail-grp {
+  background: var(--bg-2, rgba(255, 255, 255, 0.04));
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 0 12px 8px;
+}
+
+.rail-grp > summary {
+  cursor: pointer;
+  padding: 11px 0;
+  font-weight: 600;
+  font-size: 14px;
+  list-style: none;
+  user-select: none;
+}
+
+.rail-grp > summary::-webkit-details-marker { display: none; }
+
+.rail-grp > summary::before {
+  content: '▸ ';
+  display: inline-block;
+  transition: transform 0.15s;
+}
+
+.rail-grp[open] > summary::before { transform: rotate(90deg); }
+
+.rail-fld {
+  margin: 0 0 10px;
+}
+
+.rail-fld label {
+  display: block;
+  font-size: 12px;
+  color: var(--muted);
+  margin-bottom: 4px;
+}
+
+.rail-fld input[type='text'],
+.rail-fld select {
+  width: 100%;
+  padding: 10px 11px;
+  border-radius: 10px;
+  background: var(--bg-3, rgba(0, 0, 0, 0.25));
+  border: 1px solid var(--line);
+  color: var(--text);
+  font-size: 14px;
+  font-family: inherit;
+  box-sizing: border-box;
+}
+
+.rail-fld input[type='text']:focus,
+.rail-fld select:focus {
+  outline: none;
+  border-color: var(--accent, #6ea8ff);
+}
+
+.rail-hint {
+  font-size: 11px;
+  color: var(--muted);
+  opacity: 0.75;
+  margin-top: 3px;
+}
+
+/* 底栏 */
+.rail-bar {
+  display: flex;
+  gap: 8px;
+  padding-top: 4px;
+}
+
+.rail-bar .hud-btn {
+  flex: 1;
+  padding: 11px 8px;
+  font-size: 13px;
+}
