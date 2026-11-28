@@ -44,6 +44,8 @@ const cssPath = join(yiganDir, 'yigan.css');
 const htmlPath = join(yiganDir, 'index.html');
 
 const gameRaw = read(gamePath);
+// 宿主页也要查：退出按钮和 __yiganOnExit 钩子都写在它身上
+const screenRaw = read(join(root, 'src/tools/yigan/screen.js')) || '';
 if (gameRaw === null) {
   console.error('找不到 ' + gamePath);
   process.exit(1);
@@ -122,6 +124,34 @@ check('game.js 顶部有 ⚠️ 警示', gameRaw.slice(0, 2000).includes('⚠️
   '警示头是给直接打开文件的人看的最后一道提醒');
 check('警示里指向 yigan-fork.md', gameRaw.slice(0, 3000).includes('yigan-fork.md'),
   '要让人知道去哪看完整说明');
+
+/* ---------- 第七层：小游戏版不存档、不碰 Android 原生桥 ---------- */
+// 【为什么要这几条】用户明确要求「小游戏版不存档」。存档一旦偷偷回来，
+//   玩家换设备就会发现自己在一个本该无痕的小游戏里留下了记录；
+//   而 Android 桥在小程序里根本不存在，留着只会让新代码照着抄。
+const codeOnly = gameRaw
+  .replace(/\/\*[\s\S]*?\*\//g, '')
+  .replace(/(^|[^:])\/\/[^\n]*/g, '$1');
+check('game.js 不调 localStorage', !/localStorage\.(get|set|remove)Item/.test(codeOnly),
+  '小游戏版不存档，读写本地存储会破坏这个承诺');
+check('game.js 不调 window.Android', !/window\.Android/.test(codeOnly),
+  'Android 桥是小程序里不存在的对象，调了只会崩');
+check('saveSettings 是空实现', /function saveSettings\(\)[\s\S]{0,400}?不存档/.test(gameRaw),
+  '要留下「为什么不存」的说明，别让后人以为是漏写');
+check('loadSettings 不读存档', !/function loadSettings\(\)[\s\S]{0,300}?readStorage/.test(gameRaw),
+  '读存档和「不存档」是同一件事的两面');
+check('回放只靠手动导出', !/yigan_replay_archives_v1/.test(gameRaw),
+  '回放一局 2.47M，绝不能自动落盘');
+
+/* ---------- 第八层：退出按钮 ---------- */
+check('模板里有退出按钮', screenRaw.includes('btnExit'),
+  '用户要求小游戏版支持退出，按钮放声音左边');
+check('退出按钮在声音按钮之前', screenRaw.indexOf('btnExit') < screenRaw.indexOf('btnSound'),
+  '用户要求「退出按钮放在声音按钮左边」');
+check('game.js 绑定了退出按钮', codeOnly.includes("$('#btnExit')"),
+  '按钮没绑事件就是个摆设');
+check('退出走宿主钩子', gameRaw.includes('__yiganOnExit'),
+  '小程序里 window.close() 关不掉宿主，必须回调 screen.js');
 
 /* ---------- 输出 ---------- */
 if (fails.length === 0) {

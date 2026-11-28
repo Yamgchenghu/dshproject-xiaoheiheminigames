@@ -47,12 +47,21 @@ g3.start();
 const fakeCtx = { save(){}, restore(){}, translate(){}, scale(){}, fillRect(){}, fillStyle:'', beginPath(){}, arc(){}, fill(){}, stroke(){}, moveTo(){}, lineTo(){}, strokeStyle:'', lineWidth:0, globalAlpha:1, setLineDash(){}, closePath(){}, createLinearGradient(){return {addColorStop(){}};}, ellipse(){}, rect(){}, clip(){}, rotate(){}, font:'', fillText(){}, measureText(){return {width:0};}, textAlign:'', textBaseline:'' };
 g3.draw(fakeCtx, 390, 790);
 // 抬起（isDown=false）才落果
-for (let i = 0; i < 10; i++) {
-  g3.pointer(60 + i * 25, 400, true);
-  g3.pointer(60 + i * 25, 400, false);
-  for (let k = 0; k < 40; k++) g3.tick(1 / 60);
+// 抬起（isDown=false）才落果。
+// 【为什么要固定 seed 和落点】这一条原来用 10 个不同横坐标 + 随机 tier，
+//   只有恰好落到相邻且同级的两个球才会合并出分，实测 20 次里有 2 次是 0 分。
+//   那是测试自己在赌运气，不是游戏坏了。固定种子 + 同一个落点之后，
+//   落果序列是确定的，第 3 颗必然和第 2 颗同级合并——score 稳定在 110。
+//   注意种子不能随便挑：12345 的序列在前 12 颗里一次都没重样，会是 0 分。
+const g4 = create('watermelon', { mode: 'classic', seed: 1 });
+g4.start();
+g4.draw(fakeCtx, 390, 790);
+for (let i = 0; i < 6; i++) {
+  g4.pointer(195, 400, true);
+  g4.pointer(195, 400, false);
+  for (let k = 0; k < 40; k++) g4.tick(1 / 60);
 }
-ok('连续落果能产生分数', g3.score > 0, 'score=' + g3.score);
+ok('连续落果能产生分数', g4.score > 0, 'score=' + g4.score);
 
 console.log('\n' + '='.repeat(50));
 console.log('通过 ' + pass + ' 项，失败 ' + fail + ' 项');

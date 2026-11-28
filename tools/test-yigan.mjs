@@ -73,11 +73,11 @@ section('计分：空状态不崩');
   ok('空对象不抛错', typeof computeRunScore({}) === 'number');
 }
 
-section('量化表：四种模式都已登记，基准分与 MODE_BASE 一致');
+section('量化表：六种模式都已登记，基准分与 MODE_BASE 一致');
 {
   ok('MODE_KEYS 含 yigan', Array.isArray(MODE_KEYS.yigan));
-  ok('四个模式都在', MODE_KEYS.yigan.length === 4, 'got=' + MODE_KEYS.yigan.length);
-  for (const m of ['8ball', '9ball', 'rotation', 'snooker']) {
+  ok('六个模式都在', MODE_KEYS.yigan.length === 6, 'got=' + MODE_KEYS.yigan.length);
+  for (const m of ['8ball', '9ball', '10ball', 'rotation', 'snooker', 'snooker6']) {
     ok('MODE_KEYS 含 ' + m, MODE_KEYS.yigan.includes(m));
     ok(m + ' 有基准分', baseOf('yigan', m) > 0, 'got=' + baseOf('yigan', m));
   }
@@ -86,7 +86,9 @@ section('量化表：四种模式都已登记，基准分与 MODE_BASE 一致');
 
 section('MODES 元信息与量化表一致');
 {
-  ok('MODES 有 4 项', MODES.length === 4, 'got=' + MODES.length);
+  // 【为什么是 4 项】这是复古游戏里那份一杆清台（src/tools/yigan/scoring.js），
+  //   它只移植了上游的四种玩法。完整版（src/tools/pool/）多出十球和 6 红球，
+  ok('yigan 的 MODES 有 4 项', MODES.length === 4, 'got=' + MODES.length);
   for (const m of MODES) {
     ok('MODES 里的 ' + m.value + ' 在量化表里', MODE_KEYS.yigan.includes(m.value));
     ok('MODES 里的 ' + m.value + ' 有中文名', !!m.label);

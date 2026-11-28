@@ -98,16 +98,11 @@ const DEFAULT_SETTINGS = {
 
 function loadSettings() {
   const s = { ...DEFAULT_SETTINGS };
-  let raw = '';
-  try {
-    if (window.Android && typeof window.Android.loadPrefs === 'function') raw = window.Android.loadPrefs() || '';
-  } catch (e) { /* ignore */ }
-  if (!raw) {
-    try { raw = localStorage.getItem('yigan.settings.v1') || ''; } catch (e) { /* ignore */ }
-  }
-  if (raw) {
-    try { Object.assign(s, JSON.parse(raw)); } catch (e) { /* ignore */ }
-  }
+  /* 【小游戏版不存档】用户明确要求「小游戏版不存档」。
+     所以这里不读 localStorage、也不读 Android 原生偏好——
+     每次进来都是干净的一套默认设置。API Key 这类东西在这个版本里
+     本来就被整块删掉了，剩下能存的只有音量、辅助线、难度，
+     丢了也不影响任何东西，换来的是「绝不写脏存储」这个确定行为。 */
   if (!['8ball', '9ball', 'rotation', 'snooker'].includes(s.mode)) s.mode = '8ball';
   if (!['local', 'human'].includes(s.opponent)) s.opponent = 'local';
   if (!['easy', 'normal', 'master'].includes(s.difficulty)) s.difficulty = 'normal';
@@ -136,9 +131,11 @@ function seatName(seat, index) {
 
 const S = loadSettings();
 function saveSettings() {
-  const raw = JSON.stringify(S);
-  try { localStorage.setItem('yigan.settings.v1', raw); } catch (e) { /* ignore */ }
-  try { if (window.Android && typeof window.Android.savePrefs === 'function') window.Android.savePrefs(raw); } catch (e) { /* ignore */ }
+  /* 【小游戏版不存档】用户明确要求「小游戏版不存档」。
+     所以这里什么都不做——不写 localStorage，也不调 Android 原生偏好。
+     这个版本里能存的只有音量、辅助线、难度、对手类型，
+     每次进来重新选一次的成本远低于「写脏存储」的风险。
+     真正需要留存的是成绩，那走的是 src/core/scores.js 的存档通道，与此无关。 */
 }
 
 /* ---------------- game state ---------------- */
@@ -763,7 +760,10 @@ function sfx(name, power = 0.5) {
 
 function vibrate(ms = 10) {
   if (SB) return;
-  try { if (window.Android && window.Android.vibrate) window.Android.vibrate(ms); } catch (e) { /* ignore */ }
+  /* 【为什么不调 window.Android.vibrate】那是上游 WebView APK 的原生桥，
+     小程序里没有这个对象，留着只会是死代码。真需要震动就走小黑盒的
+     设备能力接口，由 screen.js 那一层去接，game.js 不直接碰平台 API。 */
+  try { if (navigator.vibrate) navigator.vibrate(ms); } catch (e) { /* 不支持就算了，震动不是关键体验 */ }
 }
 
 /* ============================================================
@@ -2819,64 +2819,20 @@ function replayArchiveStamp(replay) {
 }
 
 function archiveReplay(replay) {
-  if (!replay || !replay.shots || !replay.shots.length) return;
-  if (replay.archiveName) return;
-  const name = `yigan-replay-${replayArchiveStamp(replay)}-${Math.random().toString(36).slice(2, 6)}.json`;
-  replay.archiveName = name;
-  replay.savedAt = new Date().toISOString();
-  const json = JSON.stringify(replay);
-  try {
-    if (window.Android && typeof window.Android.saveReplayArchive === 'function') {
-      const res = window.Android.saveReplayArchive(name, json);
-      if (res && res.startsWith('ERR')) { replay.archiveName = ''; return; }
-      REPLAY_ARCHIVE_DIR = res ? res.substring(0, res.lastIndexOf('/')) : '';
-    } else {
-      const key = 'yigan_replay_archives_v1';
-      const list = JSON.parse(localStorage.getItem(key) || '[]');
-      list.push({ name, createdAt: replay.createdAt, json });
-      const cutoff = Date.now() - REPLAY_RETENTION_DAYS * 86400000;
-      const fresh = list.filter((x) => new Date(x.createdAt).getTime() >= cutoff).slice(-30);
-      localStorage.setItem(key, JSON.stringify(fresh));
-    }
-  } catch (e) { /* archive failure must not break the game */ }
+  /* 【小游戏版不存档】用户明确要求「小游戏版不存档」，
+     而回放恰恰是最不能塞进存储的东西：
+     一局回放实测 2.47 MB，云端单个 value 上限 16 KB，差两个数量级。
+     所以这里只打一个时间戳（回放列表要显示「什么时候打的」），
+     不做任何落盘。关掉小程序回放就没了，这是设计，不是缺陷。 */
+  if (!replay) return;
+  if (!replay.savedAt) replay.savedAt = new Date().toISOString();
 }
 
 function loadReplayArchives() {
-  const loaded = [];
-  try {
-    if (window.Android && typeof window.Android.listReplayArchives === 'function') {
-      const raw = window.Android.listReplayArchives();
-      const arr = JSON.parse(raw || '[]');
-      for (const item of arr) {
-        try {
-          const text = window.Android.readReplayArchive(item.name);
-          if (!text || text.startsWith('ERR')) continue;
-          const r = JSON.parse(text);
-          r.archiveName = item.name;
-          if (r.shots && r.shots.length) loaded.push(r);
-        } catch (e) { /* skip corrupt */ }
-      }
-      REPLAY_ARCHIVE_DIR = window.Android.replayArchiveDir ? window.Android.replayArchiveDir() : '';
-    } else {
-      const list = JSON.parse(localStorage.getItem('yigan_replay_archives_v1') || '[]');
-      for (const item of list) {
-        try {
-          const r = JSON.parse(item.json);
-          r.archiveName = item.name;
-          if (r.shots && r.shots.length) loaded.push(r);
-        } catch (e) {}
-      }
-    }
-  } catch (e) { /* ignore */ }
-  const cutoff = Date.now() - REPLAY_RETENTION_DAYS * 86400000;
-  const seen = new Set(REPLAYS.map((r) => r.archiveName || r.createdAt));
-  for (const r of loaded) {
-    if (new Date(r.createdAt).getTime() < cutoff) continue;
-    const key = r.archiveName || r.createdAt;
-    if (seen.has(key)) continue;
-    seen.add(key);
-    REPLAYS.push(r);
-  }
+  /* 【小游戏版不存档】没有落盘就没有可加载的存档。
+     这里只把内存里已有的回放排个序、刷一下按钮状态。
+     【为什么还要留着这个函数】startGame / boot 会调它，
+     删掉调用点会牵动一堆无关代码；留成空壳成本最低、最不容易再错。 */
   REPLAYS.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
   if (REPLAYS.length > 30) REPLAYS.splice(0, REPLAYS.length - 30);
   updateReplayUI();
@@ -3591,15 +3547,9 @@ function exportReplay() {
   const d = new Date(replay.createdAt);
   const stamp = `${d.getFullYear()}${String(d.getMonth() + 1).padStart(2, '0')}${String(d.getDate()).padStart(2, '0')}-${String(d.getHours()).padStart(2, '0')}${String(d.getMinutes()).padStart(2, '0')}`;
   const name = `yigan-replay-${stamp}-export.json`;
-  if (window.Android && typeof window.Android.saveReplay === 'function') {
-    try {
-      const res = window.Android.saveReplay(name, json);
-      showToast(res && res.startsWith('ERR') ? res : '已导出：' + (res || name), !!(res && res.startsWith('ERR')));
-    } catch (e) {
-      showToast('导出失败：' + e.message, true);
-    }
-    return;
-  }
+  /* 【为什么只剩浏览器下载】上游这里有个 window.Android.saveReplay 分支，
+     那是 WebView APK 的原生落盘。小程序里没有这个对象，分支永远走不到。
+     删掉后统一走 <a download>，在小黑盒的 WebView 里同样能触发系统下载。 */
   try {
     const blob = new Blob([json], { type: 'application/json' });
     const a = document.createElement('a');
@@ -4587,14 +4537,14 @@ function bindCueDock() {
     ensureAudio();
     // 【为什么用 toAppPoint】横屏旋转后，玩家在屏幕上的「下」对应应用层的「右」，
     //   直接用 clientY 会让蓄力方向整体错 90°。
-    cueDrag = { id: e.pointerId, startY: toAppPoint(e.clientX, e.clientY).x, moved: 0 };
+    cueDrag = { id: e.pointerId, startY: toAppPoint(e.clientX, e.clientY).y, moved: 0 };
     dock.classList.add('dragging');
     try { track.setPointerCapture(e.pointerId); } catch (err) { /* ignore */ }
   });
   track.addEventListener('pointermove', (e) => {
     if (!cueDrag || e.pointerId !== cueDrag.id) return;
     e.preventDefault();
-    const dy = Math.max(0, toAppPoint(e.clientX, e.clientY).x - cueDrag.startY);
+    const dy = Math.max(0, toAppPoint(e.clientX, e.clientY).y - cueDrag.startY);
     cueDrag.moved = dy;
     const raw = clamp(0.1 + (dy / 150) * 0.9, 0.1, 1);
     const step = clamp(Math.round(((raw - 0.1) / 0.9) * CUE_POWER_STEPS), 0, CUE_POWER_STEPS);
@@ -4634,7 +4584,7 @@ function bindCueDock() {
     e.stopPropagation();
     ensureAudio();
     fineDrag = {
-      id: e.pointerId, startY: toAppPoint(e.clientX, e.clientY).x,
+      id: e.pointerId, startY: toAppPoint(e.clientX, e.clientY).y,
       startAim: G.aimAngle, startFine: G.fineDelta || 0,
     };
     knob.classList.add('active');
@@ -4643,7 +4593,7 @@ function bindCueDock() {
   knob.addEventListener('pointermove', (e) => {
     if (!fineDrag || e.pointerId !== fineDrag.id) return;
     e.preventDefault();
-    const next = clamp(fineDrag.startFine + (toAppPoint(e.clientX, e.clientY).x - fineDrag.startY) * 0.0016, -0.35, 0.35);
+    const next = clamp(fineDrag.startFine + (toAppPoint(e.clientX, e.clientY).y - fineDrag.startY) * 0.0016, -0.35, 0.35);
     G.aimAngle = fineDrag.startAim + (next - fineDrag.startFine);
     G.fineDelta = next;
     G._hintKey = null;
@@ -4885,6 +4835,15 @@ function bindEvents() {
   });
   canvas.addEventListener('contextmenu', (e) => e.preventDefault());
 
+  /* 【退出按钮】用户要求「一杆清台小游戏版支持退出 — 退出按钮放在声音按钮左边」。
+     小游戏版是嵌在小程序里的全屏层，window.close() 关不掉宿主，
+     必须回调 screen.js 的 exit()，由它拆掉浮层、停掉 raf 和 AI 定时器。 */
+  $('#btnExit').addEventListener('click', () => {
+    if (typeof window.__yiganOnExit === 'function') { window.__yiganOnExit(); return; }
+    // 兜底：万一宿主没挂钩子（比如单独打开 game.js 调试），至少退回欢迎页，
+    // 不要留一个点了完全没反应的按钮。
+    closeAllModals(); paused = true; openModal('welcome');
+  });
   $('#btnSound').addEventListener('click', () => {
     S.sound = !S.sound;
     saveSettings();
@@ -4907,9 +4866,13 @@ function bindEvents() {
   });
   $('#menuSettings').addEventListener('click', openSettings);
   $('#menuRules').addEventListener('click', () => openModal('rulesModal'));
+  /* 【菜单里的退出】上游是调 window.Android.exit()（WebView APK 的原生桥）再退 window.close()。
+     小程序里这两个都没有：游戏是嵌进来的全屏层，关不掉宿主页面。
+     统一走 screen.js 挂的 __yiganOnExit，由它拆浮层、停 raf 和 AI 定时器。 */
   $('#menuExit').addEventListener('click', () => {
-    if (window.Android && window.Android.exit) window.Android.exit();
-    else window.close();
+    if (typeof window.__yiganOnExit === 'function') { window.__yiganOnExit(); return; }
+    // 兜底：宿主没挂钩子时至少退回欢迎页，不要留一个点了没反应的按钮。
+    closeAllModals(); paused = true; openModal('welcome');
   });
   $('#btnNew').addEventListener('click', () => {
     newGame();

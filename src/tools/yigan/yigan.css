@@ -492,3 +492,8 @@
  *   从来没定义过这个类——原版只有一页，永远走不到。现在加了「模型」
  *   第二页，不定义就会出现两个面板同时显示、标题叠在一起。 */
 .yg-root .pane-hidden{display:none}
+
+/* 退出按钮：复用 .icon-btn 的尺寸与配色，只补一个悬停/按下反馈，
+   免得用户以为它和旁边的辅助线按钮一样是切换开关。 */
+.yg-root #btnExit:active{transform:scale(.92);opacity:.75}
+.yg-root #btnExit svg{stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}

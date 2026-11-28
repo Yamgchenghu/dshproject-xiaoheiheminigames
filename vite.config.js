@@ -25,11 +25,17 @@ const pkg = JSON.parse(readFileSync(new URL('./package.json', import.meta.url), 
  */
 function resolveVariant() {
   const forced = process.env.APP_VARIANT;
-  if (forced === 'games' || forced === 'tools') return forced;
-  // package.json 里 heybox.name 是变体的唯一真源：
-  //   叫「复古游戏」就是 games，其余一律 tools。
+  if (forced === 'games' || forced === 'tools' || forced === 'pool') return forced;
+  // package.json 里 heybox.name 是变体的唯一真源。
+  // 【为什么必须逐个列名字】曾经写成「不是复古游戏就当工具版」，
+  //   加进一杆清台之后，它会被静默打成工具版——界面是转盘和单词机，
+  //   审核过了线上就是错的。宁可漏判报错，也不要猜。
   const bound = pkg.heybox && pkg.heybox.name;
-  return bound === '复古游戏' ? 'games' : 'tools';
+  if (bound === '复古游戏') return 'games';
+  if (bound === '一杆清台') return 'pool';
+  if (bound === '学习与实用工具') return 'tools';
+  throw new Error('package.json 的 heybox.name 无法识别变体：' + bound +
+    '（应为 复古游戏 / 学习与实用工具 / 一杆清台）');
 }
 
 const variant = resolveVariant();

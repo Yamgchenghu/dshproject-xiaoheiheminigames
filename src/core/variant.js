@@ -35,7 +35,7 @@ function resolveVariant() {
   //   生产构建不带这个参数，所以线上仍然走构建注入的值。
   try {
     const q = new URLSearchParams(location.search).get('variant');
-    if (q === 'games' || q === 'tools') return q;
+    if (q === 'games' || q === 'tools' || q === 'pool') return q;
   } catch { /* 非浏览器环境（测试）没有 location，忽略 */ }
   const built = typeof __APP_VARIANT__ !== 'undefined' && __APP_VARIANT__;
   return built || 'tools';
@@ -45,9 +45,11 @@ export const VARIANT = resolveVariant();
 
 export const IS_GAMES = VARIANT === 'games';
 export const IS_TOOLS = VARIANT === 'tools';
+/** 第三个小程序：一杆清台（完整版，有联网权限，只做桌球） */
+export const IS_POOL = VARIANT === 'pool';
 
 /** 小程序名称，用于标题栏与分享文案 */
-export const APP_NAME = IS_GAMES ? '复古游戏' : '学习与实用工具';
+export const APP_NAME = IS_POOL ? '一杆清台' : IS_GAMES ? '复古游戏' : '学习与实用工具';
 
 /**
  * 首屏与标签页。
@@ -56,7 +58,14 @@ export const APP_NAME = IS_GAMES ? '复古游戏' : '学习与实用工具';
  *   首屏直接进游戏列表；「学习与实用工具」的主体是转盘，
  *   游戏降级成工具页里的入口（避免被判定为游戏类小程序，牵扯版号）。
  */
-export const TABS = IS_GAMES
+export const TABS = IS_POOL
+  ? [
+    // 【为什么只有一个「桌球」tab】用户要求这个小程序「只做桌球」，
+    //   多一个 tab 就多一份「这里还该有别的」的暗示。
+    { id: 'pool', label: '桌球', icon: '🎱' },
+    { id: 'mine', label: '我的', icon: '👤' },
+  ]
+  : IS_GAMES
   ? [
     { id: 'games', label: '游戏', icon: '🎮' },
     { id: 'mine', label: '我的', icon: '👤' },
@@ -68,7 +77,7 @@ export const TABS = IS_GAMES
   ];
 
 /** 默认标签页 */
-export const DEFAULT_TAB = IS_GAMES ? 'games' : 'home';
+export const DEFAULT_TAB = IS_POOL ? 'pool' : IS_GAMES ? 'games' : 'home';
 
 /**
  * 是否启用联网相关功能。
@@ -86,11 +95,15 @@ export const FEATURES = Object.freeze({
   // 【游戏只在复古游戏版】用户要求工具版移除游戏、排行榜、登录，
   //   全部迁到「复古游戏」。游戏代码仍在同一仓库，由构建变体决定是否显示。
   games: IS_GAMES,
+  // 【桌球只在一杆清台】用户要求第三个小程序「只做桌球」。
+  //   它和复古游戏里那份一杆清台是两套代码：这份是完整版（有联网、
+  //   保留国内大模型接入和双 AI 观战），那份砍掉了全部联网能力。
+  pool: IS_POOL,
   // 排行榜：只有游戏版有榜（分数来自游戏）。工具版没有可比较的分数。
-  leaderboard: IS_GAMES,
+  leaderboard: IS_GAMES || IS_POOL,
   // 登录：只有游戏版需要（榜上显示昵称头像）。
   //   工具版不需要身份，也就不用弹授权框，避免用户困惑。
-  login: IS_GAMES,
+  login: IS_GAMES || IS_POOL,
   // 【模组实验室只给游戏版】模组的作用是"用 Python 脚本改游戏内参数"，
   //   没有游戏就没有可改的东西。用户要求把它整体挪到复古游戏。
   //   注意：mod/ 目录的代码仍然打两份包（体积可忽略），

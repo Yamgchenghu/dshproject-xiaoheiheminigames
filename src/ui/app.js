@@ -18,6 +18,18 @@ import { TABS, DEFAULT_TAB, APP_NAME } from '../core/variant.js';
 import { renderHomeTab } from './tab-home.js';
 import { renderToolsTab } from './tab-tools.js';
 import { renderMineTab } from './tab-mine.js';
+// 【一杆清台为什么用动态 import】那是第三个小程序，**不开源**，
+//   它的源码目录写在 .gitignore 里。这里若用静态 import，公开仓库就少一个文件、
+//   构建直接失败。动态 import 让打包器不把它算作必需依赖，
+//   本地构建时文件在、运行时能正常加载；公开仓库里那段分支根本走不到。
+let renderPoolTabLazy = null;
+async function ensurePoolTab() {
+  if (!renderPoolTabLazy) {
+    const m = await import(/* @vite-ignore */ './tab-pool.js');
+    renderPoolTabLazy = m.renderPoolTab;
+  }
+  return renderPoolTabLazy;
+}
 import { openSettings } from './settings.js';
 import { setSettingsOpener } from './global.js';
 import { toast } from './toast.js';
@@ -123,7 +135,13 @@ export function createApp(root) {
     page.scrollTop = 0;
     if (disposeTab) { try { disposeTab(); } catch (e) { /* 清理失败不该挡住渲染 */ } disposeTab = null; }
     page.innerHTML = '';
-    if (state.tab === 'games') {
+    if (state.tab === 'pool') {
+      // 动态加载：公开仓库里没有这个文件，所以不能静态依赖它。
+      // 加载失败时退回工具页，别留一个白屏。
+      ensurePoolTab().then((fn) => {
+        if (fn) page.appendChild(fn(state, render));
+      }).catch(() => { state.tab = 'tools'; render(); });
+    } else if (state.tab === 'games') {
       // 复古游戏的首屏：直接就是游戏列表，没有转盘。
       // 【为什么复用 tools 页】游戏入口本来就在工具页里，
       //   单独写一个列表页会产生两套入口逻辑，改一处忘一处。

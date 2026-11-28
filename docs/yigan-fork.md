@@ -129,6 +129,35 @@ window.__yiganOnOver({ mode, winner, difficulty, shots, ballsTotal, players, ove
 
 ---
 
+## 三之二、小游戏版不存档（用户明确要求）
+
+「小游戏版不存档」是产品决定，不是漏做。上游一杆清台会往 localStorage 写设置、
+往 Android 原生目录写回放、用 `window.Android.vibrate` 震动、用 `window.Android.exit` 退出——
+这些在小程序里全部不成立：
+
+| 上游做法 | 小程序里为什么不行 | 现在怎么做 |
+| --- | --- | --- |
+| `localStorage` 存设置 | 沙箱里每次进来都是新的 WebView，写下去下次也读不到 | 设置只在内存里，`loadSettings()` 直接返回默认值 |
+| `saveSettings()` 写盘 | 同上，写了也是白写 | 改成空实现，但保留函数名（调用点太多） |
+| `Android.saveReplay` 存回放 | 没有这个对象 | 只保留 `<a download>` 手动导出 |
+| `Android.vibrate` | 没有这个对象 | 换 `navigator.vibrate` |
+| `Android.exit` / `window.close()` | 关不掉宿主页面 | 回调 `window.__yiganOnExit`，由 screen.js 拆浮层 |
+
+【为什么连回放都不自动存】一局回放实测 2.47 MB，而云存档单个 value 上限 16 KB，
+塞不进去；本机又存不住。所以回放只能靠玩家自己点「导出」拿到文件——
+这也是为什么完整版专门加了导入功能。
+
+## 三之三、退出按钮
+
+用户要求「一杆清台小游戏版支持退出 — 退出按钮放在声音按钮左边」。
+位置在右上角 `.top-actions` 里，顺序是 `退出 / 音效 / 辅助线 / 菜单`。
+
+【为什么不能直接 `window.close()`】游戏是嵌进小程序的一个全屏层，
+宿主页面还在，`window.close()` 对非脚本打开的窗口无效。
+所以按钮只负责调 `window.__yiganOnExit()`，真正的清理（拆 DOM、
+停 requestAnimationFrame、清 AI 定时器、恢复底部标签栏）在 `screen.js` 的 `exit()` 里。
+
+
 ## 四、上游更新时怎么做
 
 1. 把新的 `game.js` / `style.css` / `index.html` 拿到 `C:\server\_yigan-web\`。

@@ -22,23 +22,37 @@ const cur = join(root, 'package.json');
 const V = {
   tools: join(root, 'package.tools.json'),
   games: join(root, 'package.games.json'),
+  pool: join(root, 'package.pool.json'),
 };
 
 const arg = (process.argv[2] || 'status').toLowerCase();
 
 if (arg === 'status') {
   const p = JSON.parse(readFileSync(cur, 'utf8'));
-  const isGames = !p.heybox.permissions.network;
+  // 【为什么用 ID 而不是 network 判断变体】一杆清台（pool）也有 network，
+  //   只看 network 会把它误判成工具版。ID 是唯一可靠的判据。
+  // 【为什么 pool 的 ID 不写死在这里】这个文件会进公开仓库，
+  //   而第三个小程序不开源，连它的 ID 都不该公开。
+  //   所以 pool 的 ID 从 package.pool.json 里读——那个文件在 .gitignore 里。
+  const IDS = {
+    '01a1e9a3-2911-7083-87dc-f78931778505': 'games',
+    '01a1da5f-2af3-70bf-a0b0-7185e29ab423': 'tools',
+  };
+  try {
+    const poolPkg = JSON.parse(readFileSync(V.pool, 'utf8'));
+    IDS[poolPkg.heybox.miniProgramId] = 'pool';
+  } catch (e) { /* 公开仓库里没有 package.pool.json，忽略即可 */ }
+  const variant = IDS[p.heybox.miniProgramId] || '未知';
   console.log('当前绑定：' + p.heybox.name);
   console.log('  小程序 ID：' + p.heybox.miniProgramId);
   console.log('  版本：' + p.version);
-  console.log('  network 权限：' + (p.heybox.permissions.network ? '有（工具版）' : '无（游戏版，可用真实登录）'));
-  console.log('  推断变体：' + (isGames ? 'games' : 'tools'));
+  console.log('  network 权限：' + (p.heybox.permissions.network ? '有' : '无（可用真实登录）'));
+  console.log('  推断变体：' + variant);
   process.exit(0);
 }
 
 if (!V[arg]) {
-  console.error('用法：node tools/use-variant.mjs <games|tools|status>');
+  console.error('用法：node tools/use-variant.mjs <games|tools|pool|status>');
   process.exit(1);
 }
 
@@ -52,5 +66,9 @@ if (!existsSync(V.tools)) {
 const target = JSON.parse(readFileSync(V[arg], 'utf8'));
 const now = JSON.parse(readFileSync(cur, 'utf8'));
 now.heybox = target.heybox;
+// 【为什么版本号也要跟着换】三个小程序是独立发布的，版本号各自演进：
+//   复古游戏 1.4.x、学习与实用工具 1.2.x、一杆清台 1.4.19.x。
+//   只换 heybox 字段的话，一杆清台会被打成 1.4.5 发上去，版本号就乱了。
+now.version = target.version;
 writeFileSync(cur, JSON.stringify(now, null, 2) + '\n');
 console.log('已切换到：' + now.heybox.name + '（' + now.heybox.miniProgramId + '）');

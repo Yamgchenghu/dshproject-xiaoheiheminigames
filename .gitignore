@@ -30,3 +30,16 @@ tools/out/
 *.key
 .env
 .env.*
+
+# 第三个小程序「一杆清台」：**不开源**，不进本仓库
+# 【为什么整目录排除】用户明确要求这一份不公开。它和复古游戏共用同一套外壳，
+#   但它独有的 game.js / pool.css / screen.js 是上游 dshproject-yigan-web 的
+#   商业内容，公开会绕过原作者的授权。
+#   【注意】src/tools/yigan/ 是复古游戏里那份（已砍掉 API 和联机），那个照常开源，
+#   不要和这里混淆。
+src/tools/pool/
+src/ui/tab-pool.js
+tools/check-pool-fork.mjs
+tools/test-pool.mjs
+docs/pool-fork.md
+package.pool.json

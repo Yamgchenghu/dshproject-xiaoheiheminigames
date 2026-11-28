@@ -75,8 +75,14 @@ export const BASES = Object.freeze({
   //     基准高意味着它天然贡献更多总分——这是刻意的，鼓励玩难的模式。
   'yigan:8ball': 100,
   'yigan:9ball': 120,
+  // 【十球为什么在九球和轮转之间】比九球多一颗球、多一排，清台路径更长；
+  //   但比轮转简单（轮转要按号码累计 61 分）。基准跟着 scoring.js 的 MODE_BASE 走。
+  'yigan:10ball': 130,
   'yigan:rotation': 140,
   'yigan:snooker': 180,
+  // 【6 红球为什么低于标准斯诺克】只有 6 颗红球，一局杆数约为标准斯诺克的三分之一，
+  //   满分上限也低得多。但它是真斯诺克规则（红彩交替），比八球难，所以卡在 150。
+  'yigan:snooker6': 150,
 
   // 切水果：普通水果 1 分、蓝莓 2 分，一局经典大约 60~120 个
   'fruitninja:classic': 120,
@@ -348,6 +354,6 @@ export const MODE_KEYS = Object.freeze({
   donghai: ['classic'],
   // 一杆清台：四种玩法各自一个模式，分数是每局表现分（见 tools/yigan/scoring.js）。
   //   四种模式难度差很大（八球 100 基准、斯诺克 180），所以分开登记、分开量化。
-  yigan: ['8ball', '9ball', 'rotation', 'snooker'],
+  yigan: ['8ball', '9ball', '10ball', 'rotation', 'snooker', 'snooker6'],
   liushui: ['lv1','lv2','lv3','lv4','lv5','lv6','lv7','lv8','lv9','lv10','lv11','lv12','lv13','lv14'],
 });

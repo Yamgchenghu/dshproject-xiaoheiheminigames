@@ -60,7 +60,9 @@ ok(/resolveVariant/.test(viteSrc), '缺少 resolveVariant 函数');
 // 变体名和 package.json 的绑定必须能对上
 const pkg = JSON.parse(readFileSync(join(root, 'package.json'), 'utf8'));
 const boundName = pkg.heybox && pkg.heybox.name;
-ok(boundName === '复古游戏' || boundName === '学习与实用工具',
+// 【为什么三个都要认】一杆清台是第三个小程序，它也有自己的 heybox 绑定。
+//   只认前两个的话，切到 pool 时这条测试会误报失败。
+ok(boundName === '复古游戏' || boundName === '学习与实用工具' || boundName === '一杆清台',
   'package.json 的 heybox.name 不是已知变体名：' + boundName);
 
 console.log((fail === 0 ? '全部通过：' : '存在失败：') + pass + ' 通过 / ' + fail + ' 失败');
