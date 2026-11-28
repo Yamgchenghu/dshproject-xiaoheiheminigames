@@ -129,6 +129,51 @@ window.__yiganOnOver({ mode, winner, difficulty, shots, ballsTotal, players, ove
 
 ---
 
+## 三之一、版本对标与六种玩法
+
+### 版本号规则
+
+包版本写成 `{对标 APK 版本}-{小版本}`，例如 `1.4.53-1`。
+
+- 第一段 = 这份代码已经**逐行核对过**的上游 APK 版本，不是随手抄的版本号；
+- 第二段 = 在该对标下我们自己的迭代序号。
+
+`game.js` 里的 `APP_VERSION` 必须与第一段相同（设置页「关于」显示的就是它）。
+`tools/check-yigan-fork.mjs` 会核对这两者是否一致。
+
+### 1.4.53 的对标依据
+
+上游 1.4.47 → 1.4.53 全部是 ADB 签名相关（`AdbUsbHost.java`、`build.sh`、
+`AndroidManifest.xml`），对 `web/game.js` 的改动只有两处：
+
+| 版本 | `web/game.js` 的改动 |
+| --- | --- |
+| 1.4.47–1.4.50 | `adbConnectBtn` 防连点（按钮 disabled 2.5s） |
+| 1.4.51 | `LAN_NET_VERSION` 改成 `'1.4.51'` |
+| 1.4.52–1.4.53 | 只有 `APP_VERSION` 常量本身 |
+
+**单机逻辑从 1.4.25 起就没有再变过。** 所以对标 1.4.53 是安全的：
+我们移植的物理、规则、AI 全部与上游一致。
+
+> 上游 1.4.53 之后又提交了一个 `APP_VERSION` 回退到 1.4.51 的版本，
+> 这是上游自己在调 ADB 实验分支，不影响单机代码。
+> README 里写的 `v1.4.55` 是**计划中的下一个正式 Release**，当时还不存在。
+
+### 六种玩法必须齐
+
+引擎一直支持六种（`8ball` / `9ball` / `10ball` / `rotation` / `snooker` / `snooker6`），
+但移植初期只搬了四种，导致三个地方都少两项：
+
+| 位置 | 症状 |
+| --- | --- |
+| `scoring.js` 的 `MODES` | 欢迎页 / 设置页少两个玩法按钮 |
+| `scoring.js` 的 `MODE_BASE` | 十球和 6 红球按 100 分算，与量化基准打架 |
+| `game.js` 的 `modeName` / `modeTag` | 选到这两个模式时显示成「经典八球」 |
+
+**三处必须与 `src/core/quantize.js` 的 `BASES` 完全一致**，
+否则「本局表现分」和「量化基准」各算各的，总分榜会失真。
+`tools/test-yigan.mjs` 现在有一条断言把「UI 模式表」和「引擎模式表」锁在一起。
+
 ## 三之二、小游戏版不存档（用户明确要求）
 
 「小游戏版不存档」是产品决定，不是漏做。上游一杆清台会往 localStorage 写设置、

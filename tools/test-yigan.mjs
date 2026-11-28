@@ -86,12 +86,20 @@ section('量化表：六种模式都已登记，基准分与 MODE_BASE 一致');
 
 section('MODES 元信息与量化表一致');
 {
-  // 【为什么是 4 项】这是复古游戏里那份一杆清台（src/tools/yigan/scoring.js），
-  //   它只移植了上游的四种玩法。完整版（src/tools/pool/）多出十球和 6 红球，
-  ok('yigan 的 MODES 有 4 项', MODES.length === 4, 'got=' + MODES.length);
+  // 【为什么是 6 项】小游戏版和完整版现在都支持上游全部六种玩法：
+  //   八球 / 九球 / 十球 / 轮转 / 斯诺克 / 6 红球。
+  //   之前这里写死 4 项，是因为移植时只搬了四种，导致设置页少两个玩法。
+  ok('yigan 的 MODES 有 6 项', MODES.length === 6, 'got=' + MODES.length);
   for (const m of MODES) {
     ok('MODES 里的 ' + m.value + ' 在量化表里', MODE_KEYS.yigan.includes(m.value));
     ok('MODES 里的 ' + m.value + ' 有中文名', !!m.label);
+  // 【为什么要查这一条】1.4.53 之前，scoring.js 的 MODES 只有 4 项，
+  //   而 game.js 引擎其实支持 6 种。结果设置页和欢迎页都少两个玩法按钮，
+  //   用户以为只有四种能玩。这条断言把「UI 模式表」和「引擎模式表」锁在一起。
+  const gameSrc = readFileSync(join(root, 'src/tools/yigan/game.js'), 'utf8');
+  const engineModes = [...new Set([...gameSrc.matchAll(/'(\w+)': '(?:经典八球|九球|十球|轮转追分|斯诺克|6 红球斯诺克)'/g)].map((m) => m[1]))];
+  ok('MODES 覆盖引擎全部模式', engineModes.every((m) => MODES.some((x) => x.value === m)),
+    '引擎有 ' + engineModes.join('/') + '，MODES 有 ' + MODES.map((x) => x.value).join('/'));
   }
 }
 

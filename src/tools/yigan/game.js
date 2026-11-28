@@ -122,9 +122,21 @@ function loadSettings() {
   return s;
 }
 
+/**
+ * 【为什么座位名要读账号昵称】小游戏版的「你」是写死的占位名，
+ *   用户在小黑盒里本来就有昵称，球桌上还叫「你」显得很生硬。
+ *   这里优先用宿主注入的昵称（screen.js 通过 window.__yiganMyName 传进来）。
+ * 【为什么读不到就保留「你」】昵称来自云端读取，冷启动可能失败、未登录时为空。
+ *   这时候退回「你」比显示空白或「undefined」体面得多，也不影响对局。
+ */
+function myDisplayName() {
+  const n = typeof window !== 'undefined' ? window.__yiganMyName : '';
+  return typeof n === 'string' && n.trim() ? n.trim() : '';
+}
+
 function seatName(seat, index) {
-  if (!seat) return index === 0 ? '你' : '对手';
-  if (seat.type === 'human') return index === 0 ? '你' : '玩家 2';
+  if (!seat) return index === 0 ? (myDisplayName() || '你') : '对手';
+  if (seat.type === 'human') return index === 0 ? (myDisplayName() || '你') : '玩家 2';
   return '本地 AI';
 }
 
@@ -224,10 +236,10 @@ function activeBalls() { return G ? G.balls.filter((b) => b.active) : []; }
 function groupName(g) { return g === 'solid' ? '全色 1–7' : g === 'stripe' ? '花色 9–15' : '未分组'; }
 function shortGroup(g) { return g === 'solid' ? '全色' : g === 'stripe' ? '花色' : '开放'; }
 function modeName(mode = G && G.mode) {
-  return ({ '8ball': '经典八球', '9ball': '九球', rotation: '轮转追分', snooker: '斯诺克' })[mode] || '经典八球';
+  return ({ '8ball': '经典八球', '9ball': '九球', '10ball': '十球', rotation: '轮转追分', snooker: '斯诺克', 'snooker6': '6 红球斯诺克' })[mode] || '经典八球';
 }
 function modeTag(mode = G && G.mode) {
-  return ({ '8ball': '经典八球 · 8-BALL', '9ball': '九球 · 9-BALL', rotation: '轮转追分 · ROTATION', snooker: '斯诺克 · SNOOKER' })[mode] || '经典八球 · 8-BALL';
+  return ({ '8ball': '经典八球 · 8-BALL', '9ball': '九球 · 9-BALL', '10ball': '十球 · 10-BALL', rotation: '轮转追分 · ROTATION', snooker: '斯诺克 · SNOOKER', 'snooker6': '6 红球 · SNOOKER 6' })[mode] || '经典八球 · 8-BALL';
 }
 function modeShortTag(mode = G && G.mode) {
   return ({ '8ball': '8-BALL', '9ball': '9-BALL', rotation: 'ROTATION', snooker: 'SNOOKER' })[mode] || '8-BALL';
@@ -3608,7 +3620,7 @@ function bindReplay() {
    开发者终端 $shell / #root
    仅游戏内控制台，不涉及 Android 系统权限。
    ============================================================ */
-const APP_VERSION = '1.4.15';
+const APP_VERSION = '1.4.53';
 const ROOT_TOTP_SECRET = 'W7C2KZRUDJR5WZ7ZAO6O57OUIAQWJYCS';
 const ROOT_TOTP_PERIOD = 100; // seconds
 const ROOT_UNLOCK_MS = 30 * 60 * 1000;

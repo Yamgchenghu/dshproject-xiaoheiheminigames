@@ -89,6 +89,7 @@ export function renderToolsTab(state, rerender, opts = {}) {
     ]),
     h('div', { class: 'chev' }, '›'),
   ]));
+
   box.appendChild(grid);
   }
 

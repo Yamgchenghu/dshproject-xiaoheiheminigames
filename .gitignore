@@ -21,6 +21,7 @@ Thumbs.db
 _*.cjs
 _*.png
 _*.py
+_*.mjs
 !_preview.vite.config.mjs
 
 # 音频中间产物（mp3 在 public/bgm/，wav/mid 只是生成过程中的临时文件）
@@ -37,6 +38,7 @@ tools/out/
 #   商业内容，公开会绕过原作者的授权。
 #   【注意】src/tools/yigan/ 是复古游戏里那份（已砍掉 API 和联机），那个照常开源，
 #   不要和这里混淆。
+src/boot-pool.js
 src/tools/pool/
 src/ui/tab-pool.js
 tools/check-pool-fork.mjs

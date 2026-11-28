@@ -2360,7 +2360,181 @@ export function liushui() {
     reverbDamp: 0.48,
   };
 }
-export const SONGS = { minesweeper, fruitninja, g2048, snake, watermelon, donghai, liushui };
+
+/* ------------------------------------------------------------------ */
+/* 8. yigan —— 一杆清台（台球），第七首                                    */
+/* ------------------------------------------------------------------ */
+/*
+ * 【为什么要有这一首】台球桌是「安静的竞技」：出杆前要静，球进了才有声。
+ *   如果铺一首热闹的曲子，反而破坏那种屏住呼吸的感觉。
+ *   所以这首是全七首里最「克制」的一首：没有鼓，没有切分，
+ *   只有一个慢速摇摆的 6/8 律动 + 台球碰撞般的木质敲击。
+ *
+ * 【曲风怎么落地】沿用参考曲那套混合利底亚：
+ *   1. 调性用降 A 混合利底亚 —— 七首里唯一用这个调，和别的都不撞；
+ *   2. 速度 84，比推币机的 84 一样但拍号感不同（这首是 6/8 摇摆感）；
+ *   3. **用 wood 音色做「球碰球」** —— 参考曲没有这个，但台球的
+ *      听觉记忆点就是那一声「嗒」，每 2 小节一次，像球在桌面上滚动碰撞。
+ */
+export function yigan() {
+  const bpm = 84;
+  const beatsPerBar = 4;
+  // 48 小节 @84BPM = 137 秒 ≈ 2:17
+  const bars = 48;
+  const rnd = mulberry32(0x9c31);
+  const tracks = [];
+
+  // ---- 和声：降 A 混合利底亚，I - bVII - IV - I ----
+  // 【为什么是降 A】前六首占了 A/D/G/F/C/降B，降A 还空着，
+  //   而且降A 的亮度介于 F 和 降B 之间，正好配「安静但不沉闷」。
+  const PROG = [
+    ['G#', 'maj'], ['G#', 'maj'], ['C#', 'maj'], ['G#', 'maj'],
+  ];
+  const chordAt = (bar) => PROG[Math.floor(bar / 2) % PROG.length];
+
+  // ---- 电钢：八分分解，这是整首曲子的底色 ----
+  const pianoNotes = [];
+  for (let bar = 0; bar < bars; bar++) {
+    const [root, type] = chordAt(bar);
+    pianoNotes.push(...brokenChord(root, type, bar, beatsPerBar, {
+      rnd, lo: 52, hi: 74, gain: 0.20,
+    }));
+  }
+  tracks.push({
+    name: 'Piano',
+    inst: 'epiano',
+    gain: 0.62,
+    notes: pianoNotes,
+    reverb: 0.72,
+    delay: { time: (60 / bpm) * 1.5, feedback: 0.26, wet: 0.18, cutoff: 1800 },
+  });
+
+  // ---- 球碰球：这一首的辨识度来源 ----
+  // 【为什么用 wood 而不是 bell】台球是实木/树脂的碰撞，音色偏「闷」；
+  //   bell 太亮会像风铃，wood 的短促衰减才对得上「嗒」这一声。
+  //   每 2 小节一次，落在第 3 拍，像球滚过去撞到库边。
+  const clickNotes = [];
+  for (let bar = 0; bar < bars; bar += 2) {
+    const [root, type] = chordAt(bar);
+    const chord = voicing(root, type, 64, 84);
+    clickNotes.push({
+      t: bar * beatsPerBar + 2,
+      d: 0.25,
+      p: fold(chord[(bar / 2) % chord.length], 62, 86),
+      v: Math.round(34 + rnd() * 8),
+      opts: { tau: 0.16, gain: 0.13, bright: 0.9 },
+    });
+  }
+  tracks.push({ name: 'Click', inst: 'wood', gain: 0.44, notes: clickNotes, reverb: 0.66 });
+
+  // ---- 主旋律：稀疏、留白多 ----
+  // 【为什么密度低】参考曲每小节 5 个音，这首刻意压到 3 个左右。
+  //   台球是回合制，旋律要「一句一停」，不能连着走。
+  const leadNotes = [];
+  let degCursor = 0;
+  for (let bar = 0; bar < bars; bar++) {
+    if (bar % 4 === 0) degCursor = [0, 3, 2, 4, 1, 3, 0, 2][Math.floor(bar / 4) % 8];
+    // 【为什么这里不再人为留白】第一版我每 4 小节砍掉一小节的音，
+    //   密度掉到 2.9，听起来断断续续不像旋律。呼吸感交给 Click 轨和
+    //   弦乐的长音去做，旋律本身保持参考曲那种连续的 4 分音符线条。
+    const mel = melodyBar(degCursor, rnd, { leap: 0.04, span: 4 });
+    for (const n of mel) {
+      degCursor = n.deg;
+      leadNotes.push({
+        t: bar * beatsPerBar + n.pos,
+        d: n.len * 0.82,
+        p: fold(mixo('G#', n.deg, 5), 58, 82),
+        v: Math.round((n.len >= 2 ? 62 : 52) + rnd() * 6),
+        opts: { tau: n.len >= 2 ? 0.95 : 0.58, gain: 0.20, bright: 0.62 },
+      });
+    }
+  }
+  tracks.push({
+    name: 'Lead',
+    inst: 'musicBox',
+    gain: 0.52,
+    notes: leadNotes,
+    reverb: 0.80,
+    delay: { time: (60 / bpm) * 1.0, feedback: 0.24, wet: 0.18, cutoff: 1700 },
+  });
+
+  // ---- 弦乐铺底 ----
+  const padNotes = [];
+  for (let bar = 0; bar < bars; bar++) {
+    const [root, type] = chordAt(bar);
+    const chord = voicing(root, type, 56, 76);
+    for (const pch of chord) {
+      padNotes.push({
+        t: bar * beatsPerBar,
+        d: beatsPerBar - 0.3,
+        p: fold(pch, 56, 78),
+        v: 54 + Math.round(rnd() * 5),
+        opts: { tau: 1.8, gain: 0.088 },
+      });
+    }
+    padNotes.push({
+      t: bar * beatsPerBar,
+      d: beatsPerBar - 0.3,
+      p: fold(note(root + '3'), 48, 58),
+      v: 24 + Math.round(rnd() * 3),
+      opts: { tau: 2.0, gain: 0.072 },
+    });
+  }
+  tracks.push({ name: 'Strings', inst: 'strings', gain: 0.88, notes: padNotes, reverb: 0.78 });
+
+  // ---- 贝斯：每 2 小节一个长音 ----
+  const bassNotes = [];
+  for (let bar = 0; bar < bars; bar += 2) {
+    const [root] = chordAt(bar);
+    bassNotes.push({
+      t: bar * beatsPerBar,
+      d: 7.0,
+      p: fold(note(root + '2'), 30, 45),
+      v: 58 + Math.round(rnd() * 5),
+      opts: { tau: 1.25, gain: 0.20 },
+    });
+  }
+  tracks.push({ name: 'Bass', inst: 'bass', gain: 0.60, notes: bassNotes, reverb: 0.22 });
+
+  // ---- 打击：没有鼓组，只有极轻的闭镲当时间刻度 ----
+  // 【为什么连底鼓都不要】台球桌旁边不该有心跳般的低频，那会抢戏。
+  //   保留闭镲只是为了不让曲子「飘」，给一个极弱的脉冲。
+  const percNotes = [];
+  for (let bar = 0; bar < bars; bar++) {
+    for (let b = 0; b < beatsPerBar; b += 2) {
+      percNotes.push({
+        t: bar * beatsPerBar + b,
+        d: 0.10,
+        p: 42,
+        v: Math.round(16 + rnd() * 5),
+        inst: 'hat',
+        opts: { tau: 0.045, gain: 0.042 },
+      });
+    }
+  }
+  tracks.push({ name: 'Air', inst: 'hat', gain: 0.36, notes: percNotes, reverb: 0.28 });
+
+  const markers = [];
+  for (let bar = 0; bar < bars; bar += 12) {
+    markers.push({ t: bar * beatsPerBar, name: 'S' + (bar / 12 + 1) });
+  }
+
+  return {
+    name: 'yigan',
+    bpm,
+    beatsPerBar,
+    bars,
+    seed: 0x9c31,
+    key: '降A 混合利底亚',
+    tracks,
+    markers,
+    masterReverb: 0.78,
+    reverbFeedback: 0.86,
+    reverbDamp: 0.50,
+  };
+}
+
+export const SONGS = { minesweeper, fruitninja, g2048, snake, watermelon, donghai, liushui, yigan };
 
 /**
  * 不生成 mp3 的曲目。

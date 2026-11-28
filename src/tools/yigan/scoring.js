@@ -19,7 +19,15 @@
 const MODE_BASE = {
   '8ball': 100,
   '9ball': 120,
+  // 【为什么十球在九球和轮转之间】比九球多一颗球、多一排，清台路径更长；
+  //   但比轮转简单（轮转要按号码累计 61 分）。
+  //   这个数值必须与 src/core/quantize.js 的 BASES 一致，
+  //   否则「本局表现分」和「量化基准」会各算各的。
+  '10ball': 130,
   'rotation': 140,
+  // 【为什么 6 红球低于标准斯诺克】只有 6 颗红球，一局杆数约为标准斯诺克的三分之一，
+  //   满分上限也低得多；但它是真斯诺克规则（红彩交替），比八球难，所以卡在 150。
+  'snooker6': 150,
   'snooker': 180,
 };
 
@@ -63,10 +71,12 @@ export function computeRunScore(g) {
   return Math.max(1, Math.round(score));
 }
 
-/** 四种模式的元信息（给 game-screen 的模式选择用） */
+/** 六种模式的元信息（给 game-screen 的模式选择用） */
 export const MODES = [
   { value: '8ball', label: '经典八球', sub: '打完自己那组再收黑八' },
   { value: '9ball', label: '九球', sub: '按号码顺序击球' },
+  { value: '10ball', label: '十球', sub: '1 → 10 顺序，多一排' },
   { value: 'rotation', label: '轮转', sub: '每颗球按号码计分' },
   { value: 'snooker', label: '斯诺克', sub: '红球彩球交替，最高分' },
+  { value: 'snooker6', label: '6 红球', sub: '短局斯诺克，节奏更快' },
 ];

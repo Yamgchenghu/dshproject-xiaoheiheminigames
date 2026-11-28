@@ -29,8 +29,8 @@ function ok(name, cond, extra) {
 }
 function section(t) { console.log('\n=== ' + t + ' ==='); }
 
-/** 需要统一曲风的六首（贪吃蛇走实时合成，不在其列） */
-const STYLED = ['minesweeper', 'g2048', 'watermelon', 'donghai', 'liushui'];
+/** 需要统一曲风的七首（贪吃蛇走实时合成，不在其列） */
+const STYLED = ['minesweeper', 'g2048', 'watermelon', 'donghai', 'liushui', 'yigan'];
 
 section('曲目注册');
 for (const n of STYLED) {

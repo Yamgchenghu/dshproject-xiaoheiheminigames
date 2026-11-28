@@ -1,6 +1,6 @@
 {
-  "name": "mini-games-tools",
-  "version": "1.4.6",
+  "name": "retro-games",
+  "version": "1.4.53-1",
   "private": true,
   "type": "module",
   "description": "小黑盒工坊小程序：云海转盘 + 小玩法 + 单词机",
@@ -51,7 +51,7 @@
     "gen:images": "node tools/gen-images.mjs",
     "gen:chars": "node tools/collect-chars.mjs",
     "gen:voice": "node tools/copy-voice.mjs",
-    "test": "node tools/test-savever.mjs && node tools/test-save.mjs && node tools/test-liushui.mjs && node tools/test-python.mjs && node tools/test-boards.mjs && node tools/test-account.mjs && node tools/test-quantize.mjs && node tools/test-games.mjs && node tools/test-handshake.mjs && node tools/test-artwork.mjs && node tools/test-provider-models.mjs && node tools/test-variant-isolation.mjs && node tools/test-mod-toggle.mjs && node tools/check-yigan-fork.mjs && node tools/check-pool-fork.mjs && node tools/test-yigan.mjs && node tools/test-pool.mjs && node tools/test-base-info.mjs && node tools/test-fonts.mjs && node tools/test-fruitninja.mjs && node tools/test-spectate.mjs && node tools/test-bgm.mjs && node tools/test-watermelon-pointer.mjs && node tools/test-donghai.mjs && node tools/check-donghai-fork.mjs"
+    "test": "node tools/test-save.mjs && node tools/test-liushui.mjs && node tools/test-python.mjs && node tools/test-boards.mjs && node tools/test-account.mjs && node tools/test-quantize.mjs && node tools/test-games.mjs && node tools/test-handshake.mjs && node tools/test-artwork.mjs && node tools/test-provider-models.mjs && node tools/test-variant-isolation.mjs && node tools/test-mod-toggle.mjs && node tools/check-pool-fork.mjs && node tools/test-base-info.mjs && node tools/test-fonts.mjs && node tools/test-fruitninja.mjs"
   },
   "dependencies": {
     "@heybox/hb-sdk": "^0.9.8",

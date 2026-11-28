@@ -58,13 +58,11 @@ export const APP_NAME = IS_POOL ? '一杆清台' : IS_GAMES ? '复古游戏' : '
  *   首屏直接进游戏列表；「学习与实用工具」的主体是转盘，
  *   游戏降级成工具页里的入口（避免被判定为游戏类小程序，牵扯版号）。
  */
+// 【pool 为什么是空数组】第三个小程序只做桌球，进去直接是球桌，
+//   根本没有标签栏（main.js 在 pool 变体里根本不建外壳）。
+//   留空数组而不是删掉这个导出，是因为 app.js 仍在其他变体里读它。
 export const TABS = IS_POOL
-  ? [
-    // 【为什么只有一个「桌球」tab】用户要求这个小程序「只做桌球」，
-    //   多一个 tab 就多一份「这里还该有别的」的暗示。
-    { id: 'pool', label: '桌球', icon: '🎱' },
-    { id: 'mine', label: '我的', icon: '👤' },
-  ]
+  ? []
   : IS_GAMES
   ? [
     { id: 'games', label: '游戏', icon: '🎮' },
@@ -77,6 +75,7 @@ export const TABS = IS_POOL
   ];
 
 /** 默认标签页 */
+// 【pool 的默认标签无意义】它不走外壳，但保留一个合法值避免下游读到 undefined。
 export const DEFAULT_TAB = IS_POOL ? 'pool' : IS_GAMES ? 'games' : 'home';
 
 /**
